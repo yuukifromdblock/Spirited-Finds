@@ -1,1178 +1,857 @@
-*{
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&family=Uchen&display=swap');
+
+:root {
+    --ghibli-cream: #FDFBF5;
+    --ghibli-warm-paper: #F5EFE0;
+    --ghibli-card-bg: #FFFFFF;
+    --ghibli-forest: #2C4A34;        /* Deep Moss Forest Green */
+    --ghibli-forest-hover: #1E3424;
+    --ghibli-terracotta: #D9603B;    /* Calcifer Warm Flame */
+    --ghibli-terracotta-hover: #B84725;
+    --ghibli-gold: #E8A838;          /* Magical Warm Sunset Gold */
+    --ghibli-soft-border: #E8DFCE;
+    --ghibli-text-dark: #2A332C;
+    --ghibli-text-muted: #65756B;
+    
+    /* Playful Soft Shadows */
+    --ghibli-shadow: 0 8px 24px rgba(44, 74, 52, 0.08);
+    --ghibli-hover-shadow: 0 16px 36px rgba(217, 96, 59, 0.22);
+    
+    --radius-storybook: 24px;
+    --radius-pill: 50px;
+    
+    /* Playful Elastic Spring Transitions */
+    --bounce-transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --smooth-transition: all 0.3s ease;
+}
+
+/* Floating Animations */
+@keyframes ghibliFloat {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(1deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes calciferPulse {
+    0%, 100% { box-shadow: 0 6px 20px rgba(217, 96, 59, 0.3); }
+    50% { box-shadow: 0 10px 28px rgba(232, 168, 56, 0.55); }
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Uchen', serif;
 }
-.all-content{
-    background: #f0c4a7;
+
+body {
+    background-color: var(--ghibli-cream);
+    color: var(--ghibli-text-dark);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
 }
-/* navbar */
-#navbar{
-    background-color: #5D505C;
-    padding-left: 60px;
-    font-weight: bold;
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka', 'Uchen', cursive;
+    letter-spacing: 0.3px;
 }
-#logo{
-    font-size: 23px;
-    color: white;
+
+/* --- AUTOMATIC SECTION CENTERING FIX --- */
+.container, 
+#box, 
+#offer, 
+#contact, 
+#about, 
+#product-list {
+    max-width: 1200px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 20px;
+    padding-right: 20px;
 }
-#logo img{
-    margin-bottom: 15px;
+
+/* Ensure Bootstrap row columns align centrally */
+.row {
+    justify-content: center !important;
 }
-.navbar-nav{
-    margin-left: 10px;
+
+/* --- WHIMSICAL NAVBAR --- */
+#navbar {
+    background: rgba(44, 74, 52, 0.94);
+    backdrop-filter: blur(12px);
+    padding: 14px 5%;
+    border-bottom: 3px solid rgba(232, 168, 56, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
-.nav-link{
-    color: white;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px black;
-    margin-left: 15px;
-    transition: 0.5s ease;
-}
-.nav-link:hover{
-    background-color: #E8D5E2;
-    color: white;
-    border-radius: 5px;
-}
-.icons{
-    margin-left: 30px;
-}
-.icons img{
-    margin-left: 10px;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-.icons img:hover{
-    transform: translateY(-5px);
-}
-@media screen and (max-width:330px){
-    #logo{
-        font-size: 15px;
-    }
-}
-/* navbar end */
-/* home section */
-.home{
-    width: 100%;
-    height: 88.5vh;
+
+#logo {
+    font-family: 'Fredoka', cursive;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #FFF !important;
     display: flex;
-    background-image: url(./image/background2.jpg);
-    background-size: cover;
+    align-items: center;
+    gap: 12px;
+}
+
+.ghibli-logo-img {
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
+    transition: var(--bounce-transition);
+}
+
+#logo:hover .ghibli-logo-img {
+    transform: rotate(-12deg) scale(1.15);
+}
+
+.nav-link {
+    color: #FDFBF5 !important;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 8px 18px !important;
+    border-radius: var(--radius-pill);
+    transition: var(--bounce-transition);
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: var(--ghibli-gold) !important;
+    transform: translateY(-3px) scale(1.05);
+}
+
+/* Custom Ghibli Dropdown */
+.ghibli-dropdown-menu {
+    background: var(--ghibli-warm-paper);
+    border: 2px solid var(--ghibli-soft-border);
+    border-radius: 18px;
+    box-shadow: var(--ghibli-shadow);
+    padding: 10px;
+}
+
+.ghibli-dropdown-menu .dropdown-item {
+    font-family: 'Fredoka', sans-serif;
+    color: var(--ghibli-forest);
+    border-radius: 12px;
+    transition: var(--bounce-transition);
+}
+
+.ghibli-dropdown-menu .dropdown-item:hover {
+    background: var(--ghibli-terracotta);
+    color: #FFF;
+    transform: translateX(6px);
+}
+
+.nav-icons-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.nav-icon-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 0;
-}
-.home .img{
-    flex: 1 1 400px;
-}
-.home .img img{
-    width: 100%;
-}
-.home .content{
-    flex: 1 1 400px;
-    margin-left: 60px;
-}
-.content h3{
-    color: white;
-    font-size: 60px;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px black;
-}
-.content h2{
-    font-size: 60px;
-    color: white;
-    text-shadow: 1px 1px 1px black;
-    font-weight: bold;
-}
-
-.content p{
-    color: white;
-    font-weight: bold;
-    text-shadow: 1px 1px 1px black;
-}
-.content .btn{
-    width: 110px;
-    height: 38px;
-    background-color: rgba(233, 177, 147);
-    color: white;
-}
-@media screen and (max-width:800px){
-    .content h3{
-        font-size: 50px;
-    }
-}
-@media screen and (max-width:860px){
-    .home{
-        height: 120vh;
-    }
-}
-@media screen and (max-width:560px){
-    .home{
-        height: 100vh;
-    }
-}
-@media screen and (max-width:330px){
-    .content h2{
-        font-size: 30px;
-    }
-    .content h3{
-        font-size: 30px;
-    }
-}
-/* home section end */
-
-/* top cards */
-#box {
-    margin-top: 50px;
-}
-
-#box h1 {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-
-#box .card {
-    background-color: rgba(233, 177, 147, 0.8); /* Set transparent background */
-    box-shadow: 0px 0px 5px black;
-    margin-top: 10px;
-    transition: 0.5s ease;
+    color: #FFF;
     cursor: pointer;
-    display: flex; /* Use flexbox to center content */
-    justify-content: center; /* Center the content horizontally */
-    align-items: center; /* Center the content vertically */
-    height: 300px; /* Set a fixed height for all cards */
+    transition: var(--bounce-transition);
+    text-decoration: none !important;
 }
 
-#box .card img {
-    max-width: 100%; /* Ensure the image fits within the card */
-    max-height: 80%; /* Ensure the image does not overflow the card */
-    object-fit: contain; /* Maintain aspect ratio without distortion */
+.nav-icon-btn:hover {
+    background: var(--ghibli-terracotta);
+    color: #FFF;
+    transform: translateY(-4px) rotate(8deg) scale(1.12);
+    box-shadow: 0 6px 15px rgba(217, 96, 59, 0.4);
 }
 
-#box .card:hover {
-    transform: translateY(-10px);
+.nav-icon-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
 }
 
-#box .overlay {
-    opacity: 0;
+/* --- HERO SECTION --- */
+.home {
     width: 100%;
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-#box .card:hover .overlay{
-    opacity: 5;
-    margin-top: 20%;
-    transition: 0.5s ease;
+    min-height: 85vh;
+    background: linear-gradient(180deg, rgba(42, 51, 44, 0.45) 0%, rgba(42, 51, 44, 0.75) 100%), 
+                url('../images/background2.jpg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    position: relative;
 }
 
-/* top cards end */
+.home .content {
+    max-width: 780px;
+    text-align: center;
+    color: #FFF;
+}
 
-/* Cart Popout */
+.home .content h3 {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 18px rgba(0,0,0,0.6);
+    animation: ghibliFloat 4s ease-in-out infinite;
+}
+
+.home .content p {
+    font-size: 1.3rem;
+    margin-bottom: 32px;
+    opacity: 0.95;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+/* --- GHIBLI BUTTONS --- */
+.btn-ghibli-primary {
+    background: var(--ghibli-terracotta);
+    color: #FFF !important;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    padding: 14px 38px;
+    border-radius: var(--radius-pill);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 1.15rem;
+    animation: calciferPulse 3s infinite;
+    transition: var(--bounce-transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.btn-ghibli-primary:hover {
+    background: var(--ghibli-terracotta-hover);
+    transform: translateY(-5px) scale(1.06) rotate(-1deg);
+    color: #FFF !important;
+}
+
+.btn-ghibli-outline {
+    border: 2px solid #FFF;
+    color: #FFF !important;
+    font-family: 'Fredoka', sans-serif;
+    border-radius: var(--radius-pill);
+    padding: 6px 18px;
+    transition: var(--bounce-transition);
+    text-decoration: none !important;
+}
+
+.btn-ghibli-outline:hover {
+    background: #FFF;
+    color: var(--ghibli-forest) !important;
+    transform: translateY(-2px);
+}
+
+/* --- SECTION HEADINGS --- */
+.section-title {
+    text-align: center;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--ghibli-forest);
+    margin: 65px 0 35px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '✦ ✦ ✦';
+    display: block;
+    font-size: 1rem;
+    color: var(--ghibli-gold);
+    margin-top: 6px;
+    letter-spacing: 4px;
+}
+
+/* --- FEATURED FINDS CARDS (Fixed Zoom & Fixed Center) --- */
+#box .card,
+.category-card {
+    background: var(--ghibli-warm-paper);
+    border: 2px solid var(--ghibli-soft-border);
+    border-radius: var(--radius-storybook);
+    box-shadow: var(--ghibli-shadow);
+    overflow: hidden;
+    height: 290px;
+    transition: var(--bounce-transition);
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px; /* Padding para hindi lumagpas ang image sa gilid */
+}
+
+#box .card:hover,
+.category-card:hover {
+    transform: translateY(-8px) rotate(-1deg);
+    box-shadow: var(--ghibli-hover-shadow);
+    border-color: var(--ghibli-gold);
+}
+
+/* Inayos ang image fit: Naka CONTAIN na para buong paninda ang kita nang hindi naka-zoom */
+#box .card img,
+.category-card img,
+.category-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain !important;
+    transition: var(--bounce-transition);
+}
+
+#box .card:hover img,
+.category-card:hover img {
+    transform: scale(1.05); /* Gentle scale, natural tignan */
+}
+
+/* Glassmorphism Hover Overlay */
+#box .overlay,
+.category-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(44, 74, 52, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+#box .card:hover .overlay,
+.category-card:hover .category-overlay {
+    opacity: 1;
+}
+
+#box .overlay h3,
+.category-overlay h3 {
+    color: #FFFFFF !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    font-family: 'Fredoka', cursive;
+    margin: 0;
+}
+
+/* --- WHIMSICAL PRODUCT CARDS --- */
+.product-card {
+    background: var(--ghibli-card-bg);
+    border-radius: var(--radius-storybook);
+    border: 2px solid var(--ghibli-soft-border);
+    box-shadow: var(--ghibli-shadow);
+    transition: var(--bounce-transition);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-8px) rotate(0.5deg);
+    border-color: var(--ghibli-gold);
+    box-shadow: 0 18px 38px rgba(44, 74, 52, 0.16);
+}
+
+.product-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    background: linear-gradient(135deg, #F9F5EC 0%, #EDE4D3 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-bottom: 2px dashed var(--ghibli-soft-border);
+}
+
+.product-img-wrapper img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain !important;
+    transition: var(--bounce-transition);
+}
+
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.06);
+}
+
+/* Floating Action Overlay Buttons */
+.product-actions {
+    position: absolute;
+    top: 15px;
+    right: -60px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: var(--bounce-transition);
+    z-index: 2;
+}
+
+.product-card:hover .product-actions {
+    right: 15px;
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #FFF;
+    border: 2px solid var(--ghibli-soft-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ghibli-forest);
+    cursor: pointer;
+    transition: var(--bounce-transition);
+}
+
+.action-btn:hover {
+    background: var(--ghibli-terracotta);
+    border-color: var(--ghibli-terracotta);
+    color: #FFF;
+    transform: scale(1.15) rotate(8deg);
+}
+
+.action-btn svg {
+    width: 20px;
+    height: 22px;
+    fill: currentColor;
+}
+
+.product-card-body {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-card-body h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ghibli-forest);
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.star-rating {
+    color: var(--ghibli-gold);
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.product-desc {
+    color: var(--ghibli-text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 18px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid var(--ghibli-soft-border);
+}
+
+.price-tag {
+    font-family: 'Fredoka', cursive;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ghibli-terracotta);
+}
+
+.btn-add-cart-sm {
+    background: var(--ghibli-forest);
+    color: #FFF !important;
+    border: none;
+    padding: 9px 18px;
+    border-radius: var(--radius-pill);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: var(--bounce-transition);
+    text-decoration: none !important;
+}
+
+.btn-add-cart-sm:hover {
+    background: var(--ghibli-forest-hover);
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 6px 16px rgba(44, 74, 52, 0.3);
+}
+
+.btn-add-cart-sm svg {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+}
+
+/* --- BANNER --- */
+.banner {
+    width: 100%;
+    min-height: 380px;
+    background: linear-gradient(90deg, rgba(44, 74, 52, 0.92) 0%, rgba(44, 74, 52, 0.65) 100%), 
+                url('../images/banner2.gif') center/cover no-repeat;
+    border-radius: var(--radius-storybook);
+    border: 3px solid var(--ghibli-gold);
+    display: flex;
+    align-items: center;
+    padding: 40px 8%;
+    margin: 60px auto;
+    color: #FFF;
+    box-shadow: var(--ghibli-shadow);
+}
+
+.banner .content h3 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.banner .content p {
+    font-size: 1.25rem;
+    margin-bottom: 25px;
+    opacity: 0.92;
+}
+
+/* --- CONTACT & ABOUT (Center Aligned) --- */
+#about .card {
+    border-radius: var(--radius-storybook);
+    overflow: hidden;
+    border: 2px solid var(--ghibli-soft-border);
+    box-shadow: var(--ghibli-shadow);
+}
+
+#about p {
+    font-size: 1.08rem;
+    color: var(--ghibli-text-dark);
+    line-height: 1.8;
+}
+
+#contact {
+    margin: 60px auto;
+    text-align: center;
+}
+
+#contact form,
+.contact-form-container {
+    max-width: 750px;
+    margin: 0 auto !important;
+}
+
+#contact .form-control {
+    background: #FFF;
+    border: 2px solid var(--ghibli-soft-border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    transition: var(--smooth-transition);
+}
+
+#contact .form-control:focus {
+    border-color: var(--ghibli-forest);
+    box-shadow: 0 0 0 4px rgba(44, 74, 52, 0.12);
+    outline: none;
+}
+
+/* --- OFFERS (Fully Centered Cards) --- */
+#offer {
+    margin: 70px auto;
+}
+
+.offer-card {
+    text-align: center;
+    padding: 32px 20px;
+    background: #FFF;
+    border: 2px solid var(--ghibli-soft-border);
+    border-radius: var(--radius-storybook);
+    box-shadow: var(--ghibli-shadow);
+    transition: var(--bounce-transition);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.offer-card:hover {
+    transform: translateY(-8px) rotate(-1deg);
+    border-color: var(--ghibli-gold);
+    box-shadow: var(--ghibli-hover-shadow);
+}
+
+.offer-card svg {
+    width: 48px;
+    height: 48px;
+    fill: var(--ghibli-terracotta);
+    margin-bottom: 15px;
+    transition: var(--bounce-transition);
+}
+
+.offer-card:hover svg {
+    transform: scale(1.2) rotate(10deg);
+}
+
+.offer-card h5 {
+    font-weight: 700;
+    color: var(--ghibli-forest);
+    margin-bottom: 6px;
+}
+
+/* --- FOOTER --- */
+#footer {
+    background: #1C261F;
+    color: #A3B5A8;
+    padding-top: 60px;
+    border-top: 4px solid var(--ghibli-gold);
+}
+
+#footer h3, #footer h4 {
+    color: #FFF;
+}
+
+#footer a {
+    color: #A3B5A8;
+    text-decoration: none;
+    transition: var(--smooth-transition);
+}
+
+#footer a:hover {
+    color: var(--ghibli-gold);
+    padding-left: 4px;
+}
+
+/* --- CART DRAWER --- */
 .cart-container {
     position: fixed;
     top: 0;
-    right: -320px; /* Hidden off-screen */
-    width: 320px;
+    right: -400px;
+    width: 390px;
     height: 100%;
-    background-color: rgba(238, 222, 190, 0.9); /* Vintage beige with transparency */
-    border: 2px solid #d1a74f; /* Muted golden border */
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-    transition: right 0.4s ease; /* Smooth slide-in transition */
-    z-index: 1000;
-    padding: 20px;
-    overflow-y: auto; /* Allow scroll for long lists */
+    background: var(--ghibli-cream);
+    border-left: 3px solid var(--ghibli-soft-border);
+    box-shadow: -10px 0 35px rgba(0,0,0,0.2);
+    transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1050;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
 }
 
 .cart-container.active {
-    right: 0; /* Slide in */
+    right: 0;
 }
 
-/* Cart Header */
 .cart-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: 'Garamond', serif;
-    color: #8e5529; /* Muted brown */
-    border-bottom: 2px solid #d1a74f; /* Soft golden line */
-    padding-bottom: 10px;
+    border-bottom: 2px dashed var(--ghibli-soft-border);
+    padding-bottom: 15px;
 }
 
-/* Cart Items */
-.cart-items {
+.close-cart {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--ghibli-text-muted);
+    transition: var(--bounce-transition);
+}
+
+.close-cart:hover {
+    color: var(--ghibli-terracotta);
+    transform: rotate(90deg);
+}
+
+.arrow-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    background: var(--ghibli-forest);
+    color: #FFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    transition: var(--bounce-transition);
+    z-index: 99;
+}
+
+.arrow-top:hover {
+    background: var(--ghibli-terracotta);
+    transform: translateY(-6px) scale(1.1);
+    color: #FFF;
+}
+
+/* --- PRODUCT DETAILS SECTION --- */
+.product-details-section {
+    padding: 40px 0 60px;
+}
+
+.product-details-container {
+    background: var(--ghibli-card-bg);
+    border: 2px solid var(--ghibli-soft-border);
+    border-radius: var(--radius-storybook);
+    padding: 35px;
+    box-shadow: var(--ghibli-shadow);
+}
+
+.product-main-image-box {
+    background: linear-gradient(135deg, #F9F5EC 0%, #EDE4D3 100%);
+    border: 2px dashed var(--ghibli-soft-border);
+    border-radius: var(--radius-storybook);
+    padding: 25px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 380px;
+}
+
+.product-main-image-box img {
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    transition: var(--bounce-transition);
+}
+
+.product-main-image-box:hover img {
+    transform: scale(1.05) rotate(1deg);
+}
+
+.product-category-badge {
+    display: inline-block;
+    background: var(--ghibli-forest);
+    color: #FFF;
+    padding: 5px 16px;
+    border-radius: var(--radius-pill);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+}
+
+.product-details-title {
+    font-family: 'Fredoka', cursive;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ghibli-forest);
+    margin-bottom: 10px;
+}
+
+.product-details-price {
+    font-family: 'Fredoka', cursive;
+    font-size: 2rem;
+    color: var(--ghibli-terracotta);
+    font-weight: 700;
+}
+
+.rating-stars {
+    color: var(--ghibli-gold);
+    font-size: 1.1rem;
+}
+
+.product-description-text {
+    color: var(--ghibli-text-dark);
+    font-size: 1rem;
+    line-height: 1.7;
     margin: 20px 0;
 }
 
-.cart-item {
-    display: flex;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #d1a74f;
-    padding-bottom: 10px;
-    background-color: rgba(255, 240, 215, 0.8); /* Light vintage cream for items */
-    border-radius: 8px;
-}
-
-.cart-item img {
-    width: 70px;
-    height: auto;
-    margin-right: 15px;
-    border-radius: 5px;
-}
-
-.item-details h3 {
-    font-family: 'Garamond', serif;
-    font-size: 1.1em;
-    color: #8e5529; /* Muted brown for product titles */
-}
-
-.star {
-    display: none; /* Remove the stars */
-}
-
-/* Cart Footer */
-.cart-footer {
-    padding-top: 10px;
-    font-family: 'Arial', sans-serif;
-    border-top: 2px solid #d1a74f;
-    text-align: center;
-    color: #8e5529; /* Muted brown for footer text */
-}
-
-.total-price {
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.checkout-btn {
-    background-color: #8e5529; /* Muted brown button */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.checkout-btn:hover {
-    background-color: #6b4120; /* Darker brown on hover */
-}
-
-
-/* Cart Footer */
-.cart-footer {
-    margin-top: 20px;
-    text-align: right;
-}
-
-.total-price {
-    font-weight: bold;
-    font-size: 1.2em;
-    color: #d35400; /* Bold orange for total */
-}
-
-.checkout-btn {
-    background-color: #e74c3c; /* Red for checkout button */
-    color: white;
-    border: none;
+.qty-input-ghibli {
+    width: 75px;
     padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    text-align: center;
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--ghibli-soft-border);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+    color: var(--ghibli-forest);
+    outline: none;
+    transition: var(--smooth-transition);
 }
 
-.checkout-btn:hover {
-    background-color: #c0392b; /* Darker red on hover */
+.qty-input-ghibli:focus {
+    border-color: var(--ghibli-forest);
+    box-shadow: 0 0 0 3px rgba(44, 74, 52, 0.15);
 }
-/* banner */
-.banner {
-    width: 100%;
-    height: 60vh;
-    display: flex;
-    background-image: url(./image/banner2.gif);
-    background-size: cover; /* Ensures the image covers the entire banner */
-    background-position: center; /* Centers the image within the banner */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
+
+.btn-wishlist-ghibli {
+    background: #FDF2F0;
+    color: var(--ghibli-terracotta);
+    border: 2px solid var(--ghibli-soft-border);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    box-shadow: 0px 0px 10px black;
-    margin-top: 50px;
+    font-size: 1.2rem;
+    transition: var(--bounce-transition);
+    text-decoration: none !important;
 }
 
-.banner .img{
-    flex: 1 1 400px;
-}
-.banner .img img{
-    width: 100%;
-}
-.banner .content{
-    flex: 1 1 400px;
-    margin-left: 60px;
-    margin-top: 60px;
-}
-.banner .content h3{
-    color: rgba(161,109,14,1);
-    font-weight: bold;
-}
-.banner .content h2{
-    font-size: 50px;
-    color: rgba(161,109,14,1);
-    font-weight: bold;
-    text-shadow: 1px 1px 1px black;
-}
-.banner .content p{
-    color: rgba(161,109,14,1);
-}
-#btnorder button{
-    width: 150px;
-    height: 32px;
-    letter-spacing: 5px;
-    background-color: rgba(161,109,14,1);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-@media screen and (max-width:800px){
-    .banner .content h3{
-        font-size: 50px;
-    }
-}
-@media screen and (max-width:855px){
-    .banner{
-        height: 100vh;
-    }
-}
-/* banner end */
-/* product cards */
-#product-cards h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#product-cards .card {
-    background-color: rgba(233, 177, 147); 
-    box-shadow: 0 0 3px black;
-    border-radius: 5px;
-    cursor: pointer;
+.btn-wishlist-ghibli:hover {
+    background: var(--ghibli-terracotta);
+    color: #FFF;
+    transform: scale(1.1) rotate(8deg);
 }
 
-#product-cards .card img {
-    width: 100%; /* Make the image fill the width of the card */
-    height: 300px; /* Maintain the aspect ratio of the image */
-    object-fit: cover; /* Ensures the image covers the card area without distortion */
-    padding: 5px; /* Add padding around the image */
-    border-radius: 5px; /* Optional: to match the card’s rounded corners */
-    box-sizing: border-box; /* Ensure the padding doesn’t affect the overall size */
+.badge-ghibli-stock {
+    background: rgba(44, 74, 52, 0.12);
+    color: var(--ghibli-forest);
+    font-family: 'Fredoka', sans-serif;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.88rem;
+    font-weight: 600;
 }
 
-.overlay {
-    display: block;
-    opacity: 0;
-    position: absolute;
-    top: 0; /* Align the overlay at the top of the card */
-    left: 0; /* Align the overlay at the left of the card */
-    width: 100%; /* Make the overlay cover the entire card width */
-    height: 100%; /* Make the overlay cover the entire card height */
-    transition: opacity 0.5s ease; /* Smooth transition for opacity */
+.badge-ghibli-out {
+    background: rgba(217, 96, 59, 0.12);
+    color: var(--ghibli-terracotta);
+    font-family: 'Fredoka', sans-serif;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.88rem;
+    font-weight: 600;
 }
 
-#product-cards .card:hover .overlay {
-    opacity: 1;
-}
-
-.overlay i img {
-    width: 100%; /* Make the image fill the overlay space */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 30px; /* Limit the maximum width */
-    max-height: 30px; /* Limit the maximum height */
-    background-color: #2e1700;
-    padding: 7px;
-    margin: 0 auto; /* Center the image */
-    display: block;
-    cursor: pointer;
-}
-
-
-.overlay .btn-secondary{
-    background: transparent !important;
-    border: none;
-    box-shadow: none;
-}
-#product-cards h3{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-.star .checked{
-     color: yellow;
-}
-#product-cards p{
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards h6{
-    font-size: 20px;
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards h6 span button{
-    width: 100px;
-    height: 26px;
-    font-size: 15px;
-    background: transparent;
-    letter-spacing: 3px;
-    border: 2px solid #573818;
-    border-radius: 5px;
-    float: right;
-    font-weight: bold;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-#product-cards h6 span button:hover{
-    background-color: #2e1700;
-    color: white;
-}
-/* product cards1 end */
-
-/* product cards1 */
-#product-cards1 h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#product-cards1 .card {
-    background-color: rgba(107, 142, 35, 0.6);
-    box-shadow: 0 0 3px black;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#product-cards1 .card img {
-    width: 100%; /* Make the image fill the width of the card */
-    height: 300px; /* Maintain the aspect ratio of the image */
-    object-fit: cover; /* Ensures the image covers the card area without distortion */
-    padding: 5px; /* Add padding around the image */
-    border-radius: 5px; /* Optional: to match the card’s rounded corners */
-    box-sizing: border-box; /* Ensure the padding doesn’t affect the overall size */
-}
-
-.overlay {
-    display: block;
-    opacity: 0;
-    position: absolute;
-    top: 0; /* Align the overlay at the top of the card */
-    left: 0; /* Align the overlay at the left of the card */
-    width: 100%; /* Make the overlay cover the entire card width */
-    height: 100%; /* Make the overlay cover the entire card height */
-    transition: opacity 0.5s ease; /* Smooth transition for opacity */
-}
-
-#product-cards1 .card:hover .overlay {
-    opacity: 1;
-}
-
-.overlay i img {
-    width: 100%; /* Make the image fill the overlay space */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 30px; /* Limit the maximum width */
-    max-height: 30px; /* Limit the maximum height */
-    background-color: #2e1700;
-    padding: 7px;
-    margin: 0 auto; /* Center the image */
-    display: block;
-    cursor: pointer;
-}
-
-
-.overlay .btn-secondary{
-    background: transparent !important;
-    border: none;
-    box-shadow: none;
-}
-#product-cards1 h4{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-.star .checked{
-     color: yellow;
-}
-#product-cards1 p{
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards1 h6{
-    font-size: 20px;
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards1 h6 span button{
-    width: 100px;
-    height: 26px;
-    font-size: 15px;
-    background: transparent;
-    letter-spacing: 3px;
-    border: 2px solid #573818;
-    border-radius: 5px;
-    float: right;
-    font-weight: bold;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-#product-cards1 h6 span button:hover{
-    background-color: #2e1700;
-    color: white;
-}
-/* product cards1 end */
-
-/* product cards2 */
-#product-cards2 h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#product-cards2 .card {
-    background-color: rgba(93,209,209, 0.6);
-    box-shadow: 0 0 3px black;
-    border-radius: 5px;
-    cursor: pointer;
-}
-#product-cards2 .card img {
-    width: 100%; /* Make the image fill the width of the card */
-    height: 270px; /* Maintain the aspect ratio of the image */
-    object-fit: cover; /* Ensures the image covers the card area without distortion */
-    padding: 5px; /* Add padding around the image */
-    border-radius: 5px; /* Optional: to match the card’s rounded corners */
-    box-sizing: border-box; /* Ensure the padding doesn’t affect the overall size */
-}
-
-.overlay {
-    display: block;
-    opacity: 0;
-    position: absolute;
-    top: 0; /* Align the overlay at the top of the card */
-    left: 0; /* Align the overlay at the left of the card */
-    width: 100%; /* Make the overlay cover the entire card width */
-    height: 100%; /* Make the overlay cover the entire card height */
-    transition: opacity 0.5s ease; /* Smooth transition for opacity */
-}
-
-#product-cards2 .card:hover .overlay {
-    opacity: 1;
-}
-
-.overlay i img {
-    width: 100%; /* Make the image fill the overlay space */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 30px; /* Limit the maximum width */
-    max-height: 30px; /* Limit the maximum height */
-    background-color: #2e1700;
-    padding: 7px;
-    margin: 0 auto; /* Center the image */
-    display: block;
-    cursor: pointer;
-}
-.overlay .btn-secondary{
-    background: transparent !important;
-    border: none;
-    box-shadow: none;
-}
-#product-cards2 h4{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-.star .checked{
-     color: yellow;
-}
-#product-cards2 p{
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards2 h6{
-    font-size: 20px;
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards2 h6 span button{
-    width: 100px;
-    height: 26px;
-    font-size: 15px;
-    background: transparent;
-    letter-spacing: 3px;
-    border: 2px solid #573818;
-    border-radius: 5px;
-    float: right;
-    font-weight: bold;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-#product-cards2 h6 span button:hover{
-    background-color: #2e1700;
-    color: white;
-}
-
-/* product cards end */
-
-/* product cards3 */
-#product-cards3 h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#product-cards3 .card {
-    background-color: rgba(74,167,175, 0.6);
-    box-shadow: 0 0 3px black;
-    border-radius: 5px;
-    cursor: pointer;
-}
-#product-cards3 .card img {
-    width: 100%; /* Make the image fill the width of the card */
-    height: 300px; /* Maintain the aspect ratio of the image */
-    object-fit: cover; /* Ensures the image covers the card area without distortion */
-    padding: 5px; /* Add padding around the image */
-    border-radius: 5px; /* Optional: to match the card’s rounded corners */
-    box-sizing: border-box; /* Ensure the padding doesn’t affect the overall size */
-}
-
-.overlay {
-    display: block;
-    opacity: 0;
-    position: absolute;
-    top: 0; /* Align the overlay at the top of the card */
-    left: 0; /* Align the overlay at the left of the card */
-    width: 100%; /* Make the overlay cover the entire card width */
-    height: 100%; /* Make the overlay cover the entire card height */
-    transition: opacity 0.5s ease; /* Smooth transition for opacity */
-}
-
-#product-cards3 .card:hover .overlay {
-    opacity: 1;
-}
-
-.overlay i img {
-    width: 100%; /* Make the image fill the overlay space */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 30px; /* Limit the maximum width */
-    max-height: 30px; /* Limit the maximum height */
-    background-color: #2e1700;
-    padding: 7px;
-    margin: 0 auto; /* Center the image */
-    display: block;
-    cursor: pointer;
-}
-.overlay .btn-secondary{
-    background: transparent !important;
-    border: none;
-    box-shadow: none;
-}
-#product-cards3 h4{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-.star .checked{
-     color: yellow;
-}
-#product-cards3 p{
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards3 h6{
-    font-size: 20px;
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards3 h6 span button{
-    width: 100px;
-    height: 26px;
-    font-size: 15px;
-    background: transparent;
-    letter-spacing: 3px;
-    border: 2px solid #573818;
-    border-radius: 5px;
-    float: right;
-    font-weight: bold;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-#product-cards3 h6 span button:hover{
-    background-color: #2e1700;
-    color: white;
-}
-
-/* product cards3 end */
-
-/* product cards4 */
-#product-cards4 h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#product-cards4 .card {
-    background-color: rgba(33,94,240, 0.6);
-    box-shadow: 0 0 3px black;
-    border-radius: 5px;
-    cursor: pointer;
-}
-#product-cards4 .card img {
-    width: 100%; /* Make the image fill the width of the card */
-    height: 300px; /* Maintain the aspect ratio of the image */
-    object-fit: cover; /* Ensures the image covers the card area without distortion */
-    padding: 5px; /* Add padding around the image */
-    border-radius: 5px; /* Optional: to match the card’s rounded corners */
-    box-sizing: border-box; /* Ensure the padding doesn’t affect the overall size */
-}
-
-.overlay {
-    display: block;
-    opacity: 0;
-    position: absolute;
-    top: 0; /* Align the overlay at the top of the card */
-    left: 0; /* Align the overlay at the left of the card */
-    width: 100%; /* Make the overlay cover the entire card width */
-    height: 100%; /* Make the overlay cover the entire card height */
-    transition: opacity 0.5s ease; /* Smooth transition for opacity */
-}
-
-#product-cards4 .card:hover .overlay {
-    opacity: 1;
-}
-
-.overlay i img {
-    width: 100%; /* Make the image fill the overlay space */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 30px; /* Limit the maximum width */
-    max-height: 30px; /* Limit the maximum height */
-    background-color: #2e1700;
-    padding: 7px;
-    margin: 0 auto; /* Center the image */
-    display: block;
-    cursor: pointer;
-}
-
-.overlay .btn-secondary{
-    background: transparent !important;
-    border: none;
-    box-shadow: none;
-}
-#product-cards4 h4{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-.star .checked{
-     color: yellow;
-}
-#product-cards4 p{
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards4 h6{
-    font-size: 20px;
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards4 h6 span button{
-    width: 100px;
-    height: 26px;
-    font-size: 15px;
-    background: transparent;
-    letter-spacing: 3px;
-    border: 2px solid #573818;
-    border-radius: 5px;
-    float: right;
-    font-weight: bold;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-#product-cards4 h6 span button:hover{
-    background-color: #2e1700;
-    color: white;
-}
-
-/* product cards4 end */
-
-/* product cards5 */
-#product-cards5 h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#product-cards5 .card {
-    background-color: rgba(255, 255, 224, 0.7);
-    box-shadow: 0 0 3px black;
-    border-radius: 5px;
-    cursor: pointer;
-}
-#product-cards5 .card img {
-    width: 100%; /* Make the image fill the width of the card */
-    height: 300px; /* Maintain the aspect ratio of the image */
-    object-fit: cover; /* Ensures the image covers the card area without distortion */
-    padding: 5px; /* Add padding around the image */
-    border-radius: 5px; /* Optional: to match the card’s rounded corners */
-    box-sizing: border-box; /* Ensure the padding doesn’t affect the overall size */
-}
-
-.overlay {
-    display: block;
-    opacity: 0;
-    position: absolute;
-    top: 0; /* Align the overlay at the top of the card */
-    left: 0; /* Align the overlay at the left of the card */
-    width: 100%; /* Make the overlay cover the entire card width */
-    height: 100%; /* Make the overlay cover the entire card height */
-    transition: opacity 0.5s ease; /* Smooth transition for opacity */
-}
-
-#product-cards5 .card:hover .overlay {
-    opacity: 1;
-}
-
-.overlay i img {
-    width: 100%; /* Make the image fill the overlay space */
-    height: auto; /* Maintain the aspect ratio */
-    max-width: 30px; /* Limit the maximum width */
-    max-height: 30px; /* Limit the maximum height */
-    background-color: #2e1700;
-    padding: 7px;
-    margin: 0 auto; /* Center the image */
-    display: block;
-    cursor: pointer;
-}
-
-.overlay .btn-secondary{
-    background: transparent !important;
-    border: none;
-    box-shadow: none;
-}
-#product-cards5 h4{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-.star .checked{
-     color: yellow;
-}
-#product-cards5 p{
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards5 h6{
-    font-size: 20px;
-    color: #2e1700;
-    font-weight: bold;
-}
-#product-cards5 h6 span button{
-    width: 100px;
-    height: 26px;
-    font-size: 15px;
-    background: transparent;
-    letter-spacing: 3px;
-    border: 2px solid #573818;
-    border-radius: 5px;
-    float: right;
-    font-weight: bold;
-    transition: 0.5s ease;
-    cursor: pointer;
-}
-#product-cards5 h6 span button:hover{
-    background-color: #2e1700;
-    color: white;
-}
-
-/* product cards5 end */
-
-/* Gallery */
-#gallary {
-    margin-top: 50px;
-}
-
-#gallary h1 {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-
-#gallary .card {
-    height: 400px; /* Set a fixed height for all cards */
-    box-shadow: 3px 3px 3px black;
-    cursor: pointer;
-    overflow: hidden; /* Ensures images don’t overflow outside the card */
+/* Siguraduhing nasa ibabaw ng lahat ng card at animation ang Navbar at Dropdown */
+#navbar {
     position: relative;
-    background-color: rgba(233, 177, 147, 0.8);
+    z-index: 1050 !important;
 }
 
-#gallary .card img {
-    width: 101%; /* Image width stays responsive */
-    height: 100%; /* Ensures the image takes the full height of the card */
-    object-fit: cover; /* Ensures the image covers the card height without distortion */
-    padding: 7px;
-
-}
-
-#gallary .overlay {
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    color: white;
-    text-shadow: 1px 1px 1px black;
-	border-bottom: 2px solid white;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#gallary .card:hover .overlay {
-    opacity: 1;
-    margin-top: 0;
-    transition: 0.5s ease;
-}
-/*end of gallary*/
-
-/* About */
-#about {
-    margin-top: 50px;
-}
-
-#about h1 {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-
-#about .card {
-    background-color: rgba(233, 177, 147);
-    box-shadow: 0px 0px 5px black;
-    height: 500px; /* Set the height of the card to be longer */
-    position: relative; /* Allows content inside to be positioned relative to the card */
-    overflow: hidden; /* Ensures content inside doesn’t overflow */
-}
-
-#about .card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image covers the entire card without distortion */
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#about p {
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    font-weight: bold;
-    font-size: 19px;
-    position: relative; /* Positions text inside the card properly */
-    z-index: 1; /* Ensures the text is above the image */
-}
-
-#bt button {
-    width: 150px;
-    height: 32px;
-    letter-spacing: 3px;
-    background-color: rgba(233, 177, 147);
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-@media screen and (max-width: 1000px) {
-    #about p {
-        font-size: 10px;
-    }
-}
-
-@media screen and (max-width: 760px) {
-    #about p {
-        font-size: 20px;
-    }
-}
-/*About*/
-
-/* contact */
-#contact{
-    margin-top: 100px;
-}
-#contact h1{
-    text-align: center;
-    font-weight: bold;
-    margin-top: 50px;
-    color: black;
-    text-shadow: 1px 1px 1px black;
-    border-bottom: 2px solid black;
-}
-#contact input{
-    background-color: rgba(233, 177, 147); 
-}
-#contact input::placeholder{
-    color: white;
-}
-#contact textarea{
-    background-color: rgba(233, 177, 147);
-}
-#contact textarea::placeholder{
-    color: white;
-}
-#messagebtn{
-    text-align: center;
-}
-#messagebtn button{
-    width: 200px;
-    height: 30px;
-    letter-spacing: 3px;
-    font-weight: bold;
-    background: transparent;
-    border: 2px solid white;
-    color: white;
-    transition: 0.5s;
-    cursor: pointer;
-}
-#messagebtn button:hover{
-    background-color: rgba(233, 177, 147);
-}
-/* contact */
-
-/* offer */
-#offer{
-    margin-top: 50px;
-}
-#offer i{
-    font-size: 60px;
-    color: #D8A689;
-}
-/* offer */
-
-/* footer */
-#footer{
-    padding: 0 0 30px 0;
-    color: #d0d0d0;
-    font-size: 14px;
-    background:  #5D505C;
-    font-family: 'Roboto Slab', serif;
-}
-#footer .footer-top{
-    padding: 60px 0 30px;
-    background: #5D505C;
-    color: #f8baba;
-}
-#footer .footer-top .footer-contact h3{
-    color: white;
-    text-shadow: 1px 1px 1px black;
-}
-#footer .footer-top .footer-contact h4{
-    font-size: 22px;
-    margin:  0 0 300px 0;
-    padding: 2px 0 2px 0;
-    line-height: 1;
-    font-weight: 700;
-}
-#footer .footer-top .footer-contact p{
-    font-size: 14px;
-    margin: 0;
-    color: white;
-    line-height: 1;
-    font-weight: 700;
-}
-#footer .footer-top h4{
-    font-size: 16px;
-    font-weight: bold;
-    position: relative;
-    padding-bottom: 12px;
-}
-#footer .footer-top .footer-links{
-    margin-bottom: 30px;
-}
-#footer .footer-top .footer-links ul{
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-#footer .footer-top .footer-links ul li{
-    padding-right: 10px 0;
-    display: flex;
-    align-items: center;
-}
-#footer .footer-top .footer-links ul li:first-child{
-    padding: 0;
-}
-#footer .footer-top .footer-links ul li a{
-    color: white;
-    line-height: 2;
-}
-#footer .footer-top .socail-links a{
-    font-size: 18px;
-    display: inline-block;
-    color: white;
-    line-height: 1;
-    padding-right: 4px;
-    border-radius: 50px;
-    text-align: center;
-    width: 36px;
-    height: 36px;
-    transition: 0.5s ease;
-}
-#footer .copyright{
-    text-align: center;
-    float: left; 
-}
-#footer .credits{
-    float: right;
-    text-align: center;
-}
-
-ul li a {
-    color: #f8baba;
-    text-decoration: none; /* Optional: Removes the underline */
-}
-
-ul li a:hover {
-    color: #f8baba; /* Optional: Changes color when hovering */
-    text-decoration: underline; /* Optional: Adds underline on hover */
-}
-
-/* footer */
-
-
-html{
-    scroll-behavior: smooth;
-}
-.arrow{
-    position: fixed;
-    border-radius: 50px;
-    height: 50px;
-    bottom: 40px;
-    right: 50px;
-    text-decoration: none;
-    text-align: center;
-    line-height: 50px;
+.dropdown-menu, 
+.ghibli-dropdown-menu {
+    z-index: 1055 !important;
 }
