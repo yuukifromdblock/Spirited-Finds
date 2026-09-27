@@ -16,8 +16,19 @@ if (!function_exists('get_image_path')) {
     }
 }
 
+// Check User Authentication Status
+$is_logged_in = isset($_SESSION['user_id']);
+
 // Kunin ang Category ID sa URL (Default sa ID 1 kung walang nalagay)
 $category_id = isset($_GET['id']) ? intval($_GET['id']) : 1;
+
+// AUTH GUARD HANDLER: Redirects guest users to login page with a Toast message
+if (isset($_GET['action']) && $_GET['action'] === 'require_login') {
+    $_SESSION['toast_message'] = "Please log in or create an account to perform this action.";
+    $_SESSION['toast_type'] = "warning";
+    header("Location: login.php");
+    exit();
+}
 
 // MAPPING NG GIF, HEADINGS, AT PROMO PER CATEGORY ID
 $category_details = [
@@ -91,6 +102,27 @@ include 'includes/header.php';
     }
 </style>
 
+<!-- TOAST NOTIFICATION CONTAINER -->
+<?php if (isset($_SESSION['toast_message'])): ?>
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+        <div class="toast show bg-warning text-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
+            <div class="toast-header bg-warning text-dark border-0">
+                <strong class="mr-auto"><i class="fas fa-exclamation-circle mr-1"></i> Account Required</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body bg-white text-dark rounded-bottom">
+                <?php echo htmlspecialchars($_SESSION['toast_message']); ?>
+            </div>
+        </div>
+    </div>
+    <?php 
+        unset($_SESSION['toast_message']);
+        unset($_SESSION['toast_type']);
+    ?>
+<?php endif; ?>
+
 <!-- HERO BANNER WITH CATEGORY GIF -->
 <div class="category-hero" style="background-image: url('<?php echo get_image_path($current_banner['gif']); ?>');">
     <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
@@ -110,9 +142,14 @@ include 'includes/header.php';
             <?php if ($products && $products->num_rows > 0): ?>
                 <?php while ($row = $products->fetch_assoc()): ?>
                     <?php 
-                        $imgPath = get_image_path($row['image']);
-                        $rating = isset($row['rating']) ? intval($row['rating']) : 5;
+                        $pid          = $row['product_id'];
+                        $imgPath      = get_image_path($row['image']);
+                        $rating       = isset($row['rating']) ? intval($row['rating']) : 5;
                         $productTitle = $row['title'] ?? $row['product_name'] ?? 'Untitled Product';
+
+                        // Dynamic Links based on Authentication
+                        $wishlist_link = $is_logged_in ? "customer/wishlist.php?action=add&id={$pid}" : "category.php?id={$category_id}&action=require_login";
+                        $cart_link     = $is_logged_in ? "customer/cart.php?action=add&id={$pid}" : "category.php?id={$category_id}&action=require_login";
                     ?>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 py-3 mb-2">
                         <div class="product-card">
@@ -122,10 +159,12 @@ include 'includes/header.php';
                                 
                                 <!-- Floating Action Buttons -->
                                 <div class="product-actions">
-                                    <a href="product_details.php?id=<?php echo $row['product_id']; ?>" class="action-btn" title="Quick View">
+                                    <!-- EYE BUTTON: Opens product_details.php -->
+                                    <a href="product_details.php?id=<?php echo $pid; ?>" class="action-btn" title="Quick View">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="customer/wishlist.php?add=<?php echo $row['product_id']; ?>" class="action-btn" title="Add to Wishlist">
+                                    <!-- HEART BUTTON: Add to Wishlist or Redirect to Login -->
+                                    <a href="<?php echo $wishlist_link; ?>" class="action-btn" title="Add to Wishlist">
                                         <i class="fas fa-heart"></i>
                                     </a>
                                 </div>
@@ -155,9 +194,10 @@ include 'includes/header.php';
                                 <!-- Footer (Price + Add Cart Button) -->
                                 <div class="product-footer">
                                     <span class="price-tag">₱<?php echo number_format($row['price'], 2); ?></span>
-                                    <button type="button" class="btn-add-cart-sm toggle-cart" data-id="<?php echo $row['product_id']; ?>">
+                                    <!-- ADD TO CART BUTTON: Adds to Cart or Redirects to Login -->
+                                    <a href="<?php echo $cart_link; ?>" class="btn-add-cart-sm text-decoration-none">
                                         <i class="fas fa-shopping-cart"></i> Add Cart
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
 

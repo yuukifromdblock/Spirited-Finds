@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // Include DB configuration
 include 'config/db.php';
 
-// Safe Helper Function: Awtomatikong inaayos ang image path gamit ang basename()
+// Safe Helper Function: Automatic image path resolver
 if (!function_exists('get_image_path')) {
     function get_image_path(?string $image_name = '') {
         if (empty($image_name)) {
@@ -15,6 +15,17 @@ if (!function_exists('get_image_path')) {
         $filename = basename(trim($image_name));
         return 'assets/images/' . $filename;
     }
+}
+
+// Check if user is logged in
+$is_logged_in = isset($_SESSION['user_id']);
+
+// AUTH GUARD HANDLER: Redirects guest users to login page with a Toast message
+if (isset($_GET['action']) && $_GET['action'] === 'require_login') {
+    $_SESSION['toast_message'] = "Please log in or create an account to perform this action.";
+    $_SESSION['toast_type'] = "warning";
+    header("Location: login.php");
+    exit();
 }
 
 // Include Header
@@ -47,6 +58,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['send_contact'])) {
     }
 }
 ?>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<?php if (isset($_SESSION['toast_message'])): ?>
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+        <div class="toast show bg-warning text-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
+            <div class="toast-header bg-warning text-dark border-0">
+                <strong class="mr-auto"><i class="fas fa-exclamation-circle mr-1"></i> Account Required</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body bg-white text-dark rounded-bottom">
+                <?php echo htmlspecialchars($_SESSION['toast_message']); ?>
+            </div>
+        </div>
+    </div>
+    <?php 
+        unset($_SESSION['toast_message']);
+        unset($_SESSION['toast_type']);
+    ?>
+<?php endif; ?>
 
 <!-- HERO SECTION -->
 <section id="home" class="home">
@@ -112,21 +144,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['send_contact'])) {
 
         if ($showcase_res && $showcase_res->num_rows > 0) {
             while ($prod = $showcase_res->fetch_assoc()) {
+                $pid = $prod['product_id'];
+                
+                // Set Wishlist and Cart Links according to login status
+                $wishlist_link = $is_logged_in ? "customer/wishlist.php?action=add&id={$pid}" : "index.php?action=require_login";
+                $cart_link     = $is_logged_in ? "customer/cart.php?action=add&id={$pid}" : "index.php?action=require_login";
                 ?>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="product-card">
                         <div class="product-img-wrapper">
-                            <!-- Helper function resolves path dynamically -->
                             <img src="<?php echo get_image_path($prod['image']); ?>" alt="<?php echo htmlspecialchars($prod['title']); ?>">
                             
                             <!-- Floating Whimsical Actions -->
                             <div class="product-actions">
-                                <a href="product_details.php?id=<?php echo $prod['product_id']; ?>" class="action-btn" title="Quick View">
+                                <!-- EYE BUTTON: Opens product_details.php -->
+                                <a href="product_details.php?id=<?php echo $pid; ?>" class="action-btn" title="Quick View">
                                     <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                                 </a>
-                                <button type="button" class="action-btn" title="Add to Wishlist">
+                                <!-- HEART BUTTON: Add to Wishlist or Redirect to Login -->
+                                <a href="<?php echo $wishlist_link; ?>" class="action-btn" title="Add to Wishlist">
                                     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                                </button>
+                                </a>
                             </div>
                         </div>
 
@@ -144,7 +182,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['send_contact'])) {
                             
                             <div class="product-footer">
                                 <span class="price-tag">₱<?php echo number_format($prod['price'], 2); ?></span>
-                                <a href="product_details.php?id=<?php echo $prod['product_id']; ?>" class="btn-add-cart-sm">
+                                <!-- ADD TO CART BUTTON: Adds to Cart or Redirects to Login -->
+                                <a href="<?php echo $cart_link; ?>" class="btn-add-cart-sm">
                                     <i class="fas fa-shopping-cart"></i> Add Cart
                                 </a>
                             </div>
@@ -170,6 +209,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['send_contact'])) {
 
         if ($special_res && $special_res->num_rows > 0) {
             while ($sprod = $special_res->fetch_assoc()) {
+                $spid = $sprod['product_id'];
+                
+                // Set Wishlist and Cart Links according to login status
+                $swishlist_link = $is_logged_in ? "customer/wishlist.php?action=add&id={$spid}" : "index.php?action=require_login";
+                $scart_link     = $is_logged_in ? "customer/cart.php?action=add&id={$spid}" : "index.php?action=require_login";
                 ?>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="product-card">
@@ -177,8 +221,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['send_contact'])) {
                             <img src="<?php echo get_image_path($sprod['image']); ?>" alt="<?php echo htmlspecialchars($sprod['title']); ?>">
                             
                             <div class="product-actions">
-                                <a href="product_details.php?id=<?php echo $sprod['product_id']; ?>" class="action-btn" title="Quick View">
+                                <!-- EYE BUTTON: Opens product_details.php -->
+                                <a href="product_details.php?id=<?php echo $spid; ?>" class="action-btn" title="Quick View">
                                     <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                                </a>
+                                <!-- HEART BUTTON: Add to Wishlist or Redirect to Login -->
+                                <a href="<?php echo $swishlist_link; ?>" class="action-btn" title="Add to Wishlist">
+                                    <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                                 </a>
                             </div>
                         </div>
@@ -197,9 +246,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['send_contact'])) {
                             
                             <div class="product-footer">
                                 <span class="price-tag">₱<?php echo number_format($sprod['price'], 2); ?></span>
-                                <a href="product_details.php?id=<?php echo $sprod['product_id']; ?>" class="btn-add-cart-sm">
-                                    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9.83-3.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7.01L19.42 4h-.01l-1.1 2-2.76 5H8.53l-.13-.27L6.16 6l-.95-2-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.13 0-.25-.11-.25-.25z"/></svg>
-                                    Add Cart
+                                <!-- ADD TO CART BUTTON: Adds to Cart or Redirects to Login -->
+                                <a href="<?php echo $scart_link; ?>" class="btn-add-cart-sm">
+                                    <i class="fas fa-shopping-cart"></i> Add Cart
                                 </a>
                             </div>
                         </div>

@@ -21,128 +21,190 @@ if (!function_exists('get_image_path')) {
     }
 }
 
-// Redirect kung naka-login na ang user
+// Redirect kung nakalog-in na
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
 
-$msg = "";
-$msg_type = "";
+$error_msg = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
     $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    $phone = trim($_POST['phone']);
+    $password =$_POST['password'];
+    $confirm_password =$_POST['confirm_password'];
 
-    if (!empty($username) && !empty($email) && !empty($password)) {
-        // Suriin kung may kaparehong email na sa database
-        $check = $conn->prepare("SELECT user_id FROM users WHERE email = ?");
-        $check->bind_param("s", $email);
-        $check->execute();
-        $check_res = $check->get_result();
+    // Validations
+    if (empty($first_name) || empty($last_name) || empty($email) || empty($password)) {
+        $error_msg = "Please fill in all required fields.";
+    } elseif (!empty($phone) && !preg_match('/^[0-9]{11}$/', $phone)) {
+        // Validation para sa eksaktong 11-digit number
+        $error_msg = "Phone number must be exactly 11 digits and contain numbers only.";
+    } elseif ($password !== $confirm_password) {$error_msg = "Passwords do not match!";
+    } elseif (strlen($password) < 6) {$error_msg = "Password must be at least 6 characters long.";
+    } else {
+        // Suriin kung may kaparehong email sa database
+        $check_stmt =$conn->prepare("SELECT user_id FROM users WHERE email = ?");
+        $check_stmt->bind_param("s", $email);$check_stmt->execute();
+        $check_result =$check_stmt->get_result();
 
-        if ($check_res && $check_res->num_rows > 0) {
-            $msg = "An account with this email address already exists.";
-            $msg_type = "danger";
+        if ($check_result->num_rows > 0) {$error_msg = "An account with this email already exists.";
         } else {
-            // Safe password hashing
-            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-            $role = 'user';
+            // Hash the password for security
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);$role = 'customer';
 
-            $stmt = $conn->prepare("INSERT INTO users (fullname, email, password, role) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $username, $email, $hashed_password, $role);
+            // Insert bagong user sa `users` table
+            $stmt =$conn->prepare("INSERT INTO users (first_name, last_name, email, phone, password, role) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $first_name,$last_name, $email,$phone, $hashed_password,$role);
 
             if ($stmt->execute()) {
-                $msg = "Registration successful! You can now log in to your account.";
-                $msg_type = "success";
+                header("Location: login.php?signup=success");
+                exit();
             } else {
-                $msg = "There was an error during registration. Please try again.";
-                $msg_type = "danger";
+                $error_msg = "Something went wrong. Please try again later.";
             }
             $stmt->close();
         }
-        $check->close();
-    } else {
-        $msg = "Please fill in all required fields.";
-        $msg_type = "warning";
+        $check_stmt->close();
     }
 }
 
-// Include Header (Navbar at CSS imports)
 include 'includes/header.php';
 ?>
 
 <!-- Naka-link ang hiwalay na Authentication CSS -->
 <link rel="stylesheet" href="assets/global/auth.css">
 
+<style>
+    .auth-input-group {
+        position: relative;
+    }
+    /* Style para sa password toggle icon */
+    .password-toggle-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        z-index: 10;
+        transition: color 0.2s ease;
+    }
+    .password-toggle-icon:hover {
+        color: #2c3e50;
+    }
+</style>
+
 <!-- AUTHENTICATION HERO SECTION -->
 <div class="auth-wrapper" style="background-image: url('<?php echo get_image_path('bg1.jpg'); ?>');">
-    <div class="auth-card">
+    <div class="auth-card" style="max-width: 520px;">
         
-        <!-- Animated Header & Standalone Logo -->
         <div class="text-center">
             <div class="auth-logo-standalone">
                 <img src="<?php echo get_image_path('logo.png'); ?>" alt="Spirited Finds Logo">
             </div>
-            <h2 class="auth-title">Join the Magic!</h2>
-            <p class="auth-subtitle">Create an account & start your Ghibli collection.</p>
+            <h2 class="auth-title">Create an Account</h2>
+            <p class="auth-subtitle">Join us and explore the world of Studio Ghibli.</p>
         </div>
 
-        <!-- Alert Notification Message -->
-        <?php if (!empty($msg)): ?>
-            <div class="alert alert-<?php echo $msg_type; ?> alert-dismissible fade show text-center mb-4" role="alert">
-                <i class="fas <?php echo ($msg_type === 'success') ? 'fa-check-circle' : 'fa-exclamation-circle'; ?> me-1"></i>
-                <?php echo $msg; ?>
+        <?php if (!empty($error_msg)): ?>
+            <div class="alert alert-danger alert-dismissible fade show auth-alert text-center mb-4" role="alert">
+                <i class="fas fa-exclamation-circle me-1"></i> <?php echo $error_msg; ?>
             </div>
         <?php endif; ?>
 
-        <!-- Signup Form -->
         <form action="signup.php" method="POST" class="auth-form">
-            <div class="form-group">
-                <label for="username" class="form-label">Full Name / Username</label>
-                <div class="auth-input-group">
-                    <i class="fas fa-user input-icon"></i>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Howls Moving Castle" required>
+            <!-- First Name and Last Name Row (Ghibli Character Placeholders) -->
+            <div class="row">
+                <div class="col-md-6 form-group mb-3">
+                    <label for="first_name" class="form-label">First Name *</label>
+                    <div class="auth-input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Chihiro" value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-group mb-3">
+                    <label for="last_name" class="form-label">Last Name *</label>
+                    <div class="auth-input-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Ogino" value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>" required>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="email" class="form-label">Email Address</label>
+            <!-- Email & Phone -->
+            <div class="form-group mb-3">
+                <label for="email" class="form-label">Email Address *</label>
                 <div class="auth-input-group">
                     <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="chihiro@spiritedfinds.com" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="password" class="form-label">Password</label>
+            <div class="form-group mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
                 <div class="auth-input-group">
-                    <i class="fas fa-lock input-icon"></i>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+                    <i class="fas fa-phone input-icon"></i>
+                    <!-- Filtered to 11 digits and numeric only -->
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="09123456789" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+                </div>
+                <small class="text-muted">Must be exactly 11 digits (e.g., 09123456789)</small>
+            </div>
+
+            <!-- Passwords with Toggle -->
+            <div class="row">
+                <div class="col-md-6 form-group mb-3">
+                    <label for="password" class="form-label">Password *</label>
+                    <div class="auth-input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+                        <i class="fas fa-eye password-toggle-icon" onclick="togglePassword('password', this)"></i>
+                    </div>
+                </div>
+
+                <div class="col-md-6 form-group mb-3">
+                    <label for="confirm_password" class="form-label">Confirm Password *</label>
+                    <div class="auth-input-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+                        <i class="fas fa-eye password-toggle-icon" onclick="togglePassword('confirm_password', this)"></i>
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn-auth-submit">
-                <span>Create Account</span>
+            <button type="submit" class="btn-auth-submit mt-2">
+                <span>Sign Up</span>
                 <i class="fas fa-user-plus ms-1"></i>
             </button>
         </form>
 
-        <!-- Embedded Quote Text -->
-        <div class="auth-quote-embedded">
-            <p class="auth-quote-text">"Always believe in yourself. Do this and no matter where you are, you will have nothing to fear."</p>
-        </div>
-
-        <!-- Link pabalik sa Login -->
-        <div class="auth-footer-text">
-            Already have an account? <a href="login.php">Login here</a>
+        <div class="auth-footer-text mt-3">
+            Already have an account? <a href="login.php">Log in here</a>
         </div>
 
     </div>
 </div>
 
+<!-- JavaScript para sa Show/Hide Password Toggle -->
+<script>
+function togglePassword(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+    }
+}
+</script>
+
 <?php
-// Include Footer
 include 'includes/footer.php';
 ?>

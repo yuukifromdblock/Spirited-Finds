@@ -3,11 +3,10 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Dynamic Path Resolver for Database Configuration
-$db_path = file_exists('config/db.php') ? 'config/db.php' : '../config/db.php';
-include $db_path;
+// Ikinonekta nang direkta base sa Tree Structure (cart.php ay nasa customer/ folder)
+include '../config/db.php';
 
-// Safe Helper Function for Image Paths
+// Safe Helper Function para sa Image Paths
 if (!function_exists('get_image_path')) {
     function get_image_path(?string $path) {
         if (empty($path)) {
@@ -18,79 +17,133 @@ if (!function_exists('get_image_path')) {
     }
 }
 
-// Check User Authentication Status
+// Suriin kung Naka-login ang User
 $is_logged_in = isset($_SESSION['user_id']);
+$user_id = $is_logged_in ? intval($_SESSION['user_id']) : 0;
+$user_role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 
-// Initialize Session Cart array if not set
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
+// RBAC IMPLEMENTATION: Pigilan ang admin na ma-access ang customer cart
+if ($is_logged_in && $user_role === 'admin') {
+    header("Location: ../admin/dashboard.php");
+    exit();
 }
 
-// ACTION HANDLER: Update Item Quantity
-if ($is_logged_in && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] === 'update') {
+// Maximum Item Limit bawat produkto
+$max_item_limit = 10;
+
+if ($is_logged_in) {
+    // ACTION HANDLER: Magdagdag ng Item sa Database Cart (GET action=add)
+    if (isset($_GET['action']) && $_GET['action'] === 'add' && isset($_GET['id'])) {
+        $product_id = intval($_GET['id']);
+        
+        // Suriin kung umiiral na ang produkto sa cart ng user
+        $chk = $conn->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?");
+        $chk->bind_param("ii", $user_id, $product_id);
+        $chk->execute();
+        $chk_res = $chk->get_result();
+        
+        if ($chk_res && $chk_res->num_rows > 0) {
+            $row = $chk_res->fetch_assoc();
+            // Dagdagan ng 1 pero huwag lalampas sa max limit na 10
+            $new_qty = min($row['quantity'] + 1, $max_item_limit);
+            $upd = $conn->prepare("UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?");
+            $upd->bind_param("iii", $new_qty, $user_id, $product_id);
+            $upd->execute();
+            $upd->close();
+        } else {
+            // Ipasok ang bagong item sa database table
+            $ins = $conn->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, 1)");
+            $ins->bind_param("ii", $user_id, $product_id);
+            $ins->execute();
+            $ins->close();
+        }
+        $chk->close();
+        
+        header("Location: cart.php");
+        exit();
+    }
+
+    // ACTION HANDLER: Baguhin ang Dami / Quantity (POST)
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
         $product_id = intval($_POST['product_id']);
         $quantity = intval($_POST['quantity']);
+
         if ($quantity > 0) {
-            $_SESSION['cart'][$product_id] = $quantity;
+            // I-cap sa maximum na 10 items
+            if ($quantity > $max_item_limit) {
+                $quantity = $max_item_limit;
+            }
+            $upd = $conn->prepare("UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?");
+            $upd->bind_param("iii", $quantity, $user_id, $product_id);
+            $upd->execute();
+            $upd->close();
         } else {
-            unset($_SESSION['cart'][$product_id]);
+            // Kapag ginawang 0 ang quantity, burahin na sa database
+            $del = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
+            $del->bind_param("ii", $user_id, $product_id);
+            $del->execute();
+            $del->close();
         }
+        header("Location: cart.php");
+        exit();
+    }
+
+    // ACTION HANDLER: Alisin ang Item sa Database Cart (GET action=remove)
+    if (isset($_GET['action']) && $_GET['action'] === 'remove' && isset($_GET['id'])) {
+        $remove_id = intval($_GET['id']);
+        $del = $conn->prepare("DELETE FROM cart WHERE user_id = ? AND product_id = ?");
+        $del->bind_param("ii", $user_id, $remove_id);
+        $del->execute();
+        $del->close();
         header("Location: cart.php");
         exit();
     }
 }
 
-// ACTION HANDLER: Remove Item from Cart
-if ($is_logged_in && isset($_GET['action']) && $_GET['action'] === 'remove' && isset($_GET['id'])) {
-    $remove_id = intval($_GET['id']);
-    unset($_SESSION['cart'][$remove_id]);
-    header("Location: cart.php");
-    exit();
-}
-
-// Fetch Cart Product Details for Authenticated Users
+// Kuhanin ang mga Items sa Cart mula sa Database Table na 'cart' at 'products'
 $cart_products = [];
 $total_amount = 0;
 
-if ($is_logged_in && !empty($_SESSION['cart'])) {
-    $ids = array_keys($_SESSION['cart']);
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $types = str_repeat('i', count($ids));
-
-    $stmt = $conn->prepare("SELECT * FROM products WHERE product_id IN ($placeholders)");
-    $stmt->bind_param($types, ...$ids);
+if ($is_logged_in) {
+    $stmt = $conn->prepare("
+        SELECT c.cart_id, c.quantity, c.product_id, p.title, p.price, p.image, p.stock 
+        FROM cart c 
+        JOIN products p ON c.product_id = p.product_id 
+        WHERE c.user_id = ?
+        ORDER BY c.cart_id DESC
+    ");
+    $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     while ($row = $result->fetch_assoc()) {
-        $pid = $row['product_id'];
-        $qty = $_SESSION['cart'][$pid];
+        $qty = intval($row['quantity']);
         $subtotal = $row['price'] * $qty;
         $total_amount += $subtotal;
 
         $cart_products[] = [
-            'product_id' => $pid,
-            'title'      => $row['title'] ?? $row['product_name'] ?? 'Untitled Product',
+            'cart_id'    => $row['cart_id'],
+            'product_id' => $row['product_id'],
+            'title'      => $row['title'] ?? 'Untitled Product',
             'image'      => get_image_path($row['image']),
             'price'      => $row['price'],
             'quantity'   => $qty,
+            'stock'      => $row['stock'],
             'subtotal'   => $subtotal
         ];
     }
     $stmt->close();
 }
 
-// Dynamic Path Resolver for Header
-$header_path = file_exists('includes/header.php') ? 'includes/header.php' : '../includes/header.php';
-include $header_path;
+// Isinama nang direkta base sa Tree Structure
+include '../includes/header.php';
 ?>
 
 <div class="container my-5" style="min-height: 60vh;">
     <h2 class="section-title mb-4"><i class="fas fa-shopping-cart"></i> Your Shopping Cart</h2>
 
     <?php if (!$is_logged_in): ?>
-        <!-- GUEST STATE: PROMPT TO LOGIN OR REGISTER -->
+        <!-- GUEST STATE: KAILANGAN MAG-LOGIN -->
         <div class="card shadow-sm border-0 rounded-lg p-5 text-center my-5 mx-auto" style="max-width: 500px;">
             <div class="mb-3">
                 <i class="fas fa-user-lock fa-4x text-muted"></i>
@@ -104,7 +157,7 @@ include $header_path;
         </div>
 
     <?php elseif (!empty($cart_products)): ?>
-        <!-- AUTHENTICATED STATE: SHOW CART ITEMS -->
+        <!-- LOGGED-IN STATE: IPAPAKITA ANG DB CART ITEMS -->
         <div class="row">
             <!-- CART ITEMS TABLE -->
             <div class="col-lg-8 mb-4">
@@ -115,7 +168,7 @@ include $header_path;
                                 <tr>
                                     <th>Product</th>
                                     <th>Price</th>
-                                    <th>Quantity</th>
+                                    <th>Quantity (Max 10)</th>
                                     <th>Subtotal</th>
                                     <th class="text-center">Action</th>
                                 </tr>
@@ -135,10 +188,16 @@ include $header_path;
                                         </td>
                                         <td>₱<?php echo number_format($item['price'], 2); ?></td>
                                         <td>
-                                            <form action="cart.php" method="POST" class="d-flex align-items-center" style="max-width: 120px;">
+                                            <form action="cart.php" method="POST" class="d-flex align-items-center" style="max-width: 130px;">
                                                 <input type="hidden" name="action" value="update">
                                                 <input type="hidden" name="product_id" value="<?php echo $item['product_id']; ?>">
-                                                <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1" max="99" class="form-control form-control-sm mr-2 text-center" onchange="this.form.submit()">
+                                                <input type="number" 
+                                                       name="quantity" 
+                                                       value="<?php echo $item['quantity']; ?>" 
+                                                       min="1" 
+                                                       max="<?php echo min($max_item_limit, $item['stock']); ?>" 
+                                                       class="form-control form-control-sm mr-2 text-center" 
+                                                       onchange="this.form.submit()">
                                             </form>
                                         </td>
                                         <td class="font-weight-bold text-success">₱<?php echo number_format($item['subtotal'], 2); ?></td>
@@ -193,7 +252,6 @@ include $header_path;
 </div>
 
 <?php 
-// Dynamic Path Resolver for Footer
-$footer_path = file_exists('includes/footer.php') ? 'includes/footer.php' : '../includes/footer.php';
-include $footer_path; 
+// Isinama nang direkta base sa Tree Structure
+include '../includes/footer.php'; 
 ?>

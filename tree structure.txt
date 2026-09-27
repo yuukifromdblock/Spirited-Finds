@@ -1,4 +1,4 @@
-PS D:\xampp\htdocs\Spirited-Finds> tree /F 
+PS D:\xampp\htdocs\Spirited-Finds> tree /F
 Folder PATH listing for volume HDD
 Volume serial number is 2415-3D8A
 D:.
@@ -8,6 +8,7 @@ D:.
 │   logout.php
 │   product_details.php
 │   signup.php
+│   spirited_finds_db (1).sql
 │   tree structure.txt
 │   
 ├───admin
@@ -18,6 +19,7 @@ D:.
 │       
 ├───assets
 │   ├───global
+│   │       admin-style.css
 │   │       auth.css
 │   │       category.css
 │   │       style.css
@@ -123,3 +125,4 @@ D:.
 └───includes
         footer.php
         header.php
+        sidebar.php

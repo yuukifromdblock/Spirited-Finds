@@ -3,31 +3,30 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Dynamic Path Resolver for Database Configuration
-$db_path = file_exists('config/db.php') ? 'config/db.php' : '../config/db.php';
-include $db_path;
+// Ikinonekta pabalik sa root directory base sa Tree Structure
+include '../config/db.php';
 
-// Safe Helper Function for Image Paths
+// Safe Helper Function para sa Image Paths
 if (!function_exists('get_image_path')) {
     function get_image_path(?string $path) {
         if (empty($path)) {
-            return 'assets/images/logo.png';
+            return '../assets/images/logo.png';
         }
         $filename = basename(trim($path));
-        return 'assets/images/' . $filename;
+        return '../assets/images/' . $filename;
     }
 }
 
 // 1. AUTHENTICATION GUARD: Must be logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php?redirect=checkout.php");
+    header("Location: ../login.php?redirect=customer/checkout.php");
     exit();
 }
 
 // 2. ROLE GUARD: Only 'customer' role is permitted to checkout
 if (isset($_SESSION['role']) && $_SESSION['role'] !== 'customer') {
     $_SESSION['error'] = "Admins cannot perform checkout operations.";
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
@@ -37,13 +36,16 @@ if (empty($_SESSION['cart'])) {
     exit();
 }
 
-// Fetch Customer Account Details using Prepared Statement
+// Fetch Customer Account Details gamit ang first_name at last_name
 $user_id = $_SESSION['user_id'];
-$user_stmt = $conn->prepare("SELECT fullname, email, phone FROM users WHERE user_id = ?");
+$user_stmt = $conn->prepare("SELECT first_name, last_name, email, phone FROM users WHERE user_id = ?");
 $user_stmt->bind_param("i", $user_id);
 $user_stmt->execute();
 $user_data = $user_stmt->get_result()->fetch_assoc();
 $user_stmt->close();
+
+// Pagsamahin ang pangalan bilang Full Name
+$fullname_display = trim(($user_data['first_name'] ?? '') . ' ' . ($user_data['last_name'] ?? ''));
 
 // Fetch Cart Products & Calculate Total
 $cart_products = [];
@@ -145,8 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 }
 
 // Include Header
-$header_path = file_exists('includes/header.php') ? 'includes/header.php' : '../includes/header.php';
-include $header_path;
+include '../includes/header.php';
 ?>
 
 <div class="container my-5" style="min-height: 60vh;">
@@ -172,7 +173,7 @@ include $header_path;
                     
                     <div class="form-group mb-3">
                         <label class="font-weight-bold">Full Name</label>
-                        <input type="text" name="fullname" class="form-control" value="<?php echo htmlspecialchars($user_data['fullname'] ?? ''); ?>" required>
+                        <input type="text" name="fullname" class="form-control" value="<?php echo htmlspecialchars($fullname_display); ?>" required>
                     </div>
 
                     <div class="form-row">
@@ -237,7 +238,8 @@ include $header_path;
                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                          alt="<?php echo htmlspecialchars($item['title']); ?>" 
                                          style="width: 50px; height: 50px; object-fit: cover;" 
-                                         class="rounded mr-3">
+                                         class="rounded mr-3"
+                                         onerror="this.onerror=null; this.src='../assets/images/logo.png';">
                                     <div>
                                         <h6 class="mb-0 font-weight-bold small"><?php echo htmlspecialchars($item['title']); ?></h6>
                                         <small class="text-muted">Qty: <?php echo $item['quantity']; ?></small>
@@ -277,6 +279,5 @@ include $header_path;
 
 <?php 
 // Include Footer
-$footer_path = file_exists('includes/footer.php') ? 'includes/footer.php' : '../includes/footer.php';
-include $footer_path; 
+include '../includes/footer.php'; 
 ?>
