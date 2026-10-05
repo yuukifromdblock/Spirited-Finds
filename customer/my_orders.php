@@ -78,19 +78,22 @@ if ($is_logged_in) {
 include '../includes/header.php';
 ?>
 
-<div class="container my-5" style="min-height: 60vh;">
-    <h2 class="section-title mb-4"><i class="fas fa-box"></i> My Orders</h2>
+<!-- CUSTOMER STYLE LINK -->
+<link rel="stylesheet" href="../assets/global/customer-style.css">
+
+<div class="container cart-page-wrapper" style="min-height: 60vh;">
+    <h2 class="cart-title mb-4"><i class="fas fa-box text-ghibli-accent mr-2"></i> My Orders</h2>
 
     <?php if (!$is_logged_in): ?>
         <!-- GUEST STATE: KAILANGAN MAG-LOGIN -->
-        <div class="card shadow-sm border-0 rounded-lg p-5 text-center my-5 mx-auto" style="max-width: 500px;">
+        <div class="card cart-auth-card p-5 text-center my-5 mx-auto" style="max-width: 500px;">
             <div class="mb-3">
                 <i class="fas fa-user-lock fa-4x text-muted"></i>
             </div>
-            <h3 class="font-weight-bold mb-2">Authentication Required</h3>
+            <h3 class="font-weight-bold mb-2" style="font-family: 'Fredoka', cursive; color: var(--ghibli-forest);">Authentication Required</h3>
             <p class="text-muted mb-4">Please log in to view your order history.</p>
             <div class="d-grid gap-2">
-                <a href="../login.php?redirect=customer/my_orders.php" class="btn btn-ghibli-primary py-2 font-weight-bold">Log In</a>
+                <a href="../login.php?redirect=customer/my_orders.php" class="btn btn-ghibli-primary py-2 font-weight-bold mb-2">Log In</a>
                 <a href="../signup.php" class="btn btn-outline-secondary py-2 font-weight-bold">Create an Account</a>
             </div>
         </div>
@@ -100,9 +103,9 @@ include '../includes/header.php';
         <div class="row">
             <?php foreach ($orders as $order): ?>
                 <div class="col-12 mb-4">
-                    <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
+                    <div class="card cart-table-card">
                         <!-- ORDER HEADER -->
-                        <div class="card-header bg-light d-flex flex-wrap justify-content-between align-items-center py-3">
+                        <div class="card-header d-flex flex-wrap justify-content-between align-items-center py-3" style="background-color: var(--ghibli-warm-paper, #F5EFE0); border-bottom: 2px solid var(--ghibli-soft-border, #E8DFCE);">
                             <div>
                                 <span class="text-muted small">Order ID:</span>
                                 <strong class="text-dark">#<?php echo str_pad($order['order_id'], 6, '0', STR_PAD_LEFT); ?></strong>
@@ -131,15 +134,14 @@ include '../includes/header.php';
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($order['items'] as $item): ?>
-                                    <li class="list-group-item d-flex align-items-center justify-content-between p-3">
+                                    <li class="list-group-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                         <div class="d-flex align-items-center">
                                             <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                                  alt="<?php echo htmlspecialchars($item['title']); ?>" 
-                                                 style="width: 50px; height: 50px; object-fit: cover;" 
-                                                 class="rounded mr-3"
+                                                 class="cart-item-img mr-3"
                                                  onerror="this.onerror=null; this.src='../assets/images/logo.png';">
                                             <div>
-                                                <h6 class="mb-0 font-weight-bold"><?php echo htmlspecialchars($item['title']); ?></h6>
+                                                <h6 class="mb-1 font-weight-bold text-dark"><?php echo htmlspecialchars($item['title']); ?></h6>
                                                 <small class="text-muted">Qty: <?php echo $item['quantity']; ?> × ₱<?php echo number_format($item['price'], 2); ?></small>
                                             </div>
                                         </div>
@@ -152,9 +154,12 @@ include '../includes/header.php';
                         </div>
 
                         <!-- ORDER FOOTER -->
-                        <div class="card-footer bg-white text-right py-3 border-top-0">
-                            <span class="text-muted mr-2">Total Amount:</span>
-                            <strong class="h5 font-weight-bold text-success mb-0">₱<?php echo number_format($order['total_amount'], 2); ?></strong>
+                        <div class="card-footer bg-white text-right py-3 border-top-0 d-flex justify-content-between align-items-center">
+                            <span class="text-muted small"><i class="fas fa-shipping-fast text-success mr-1"></i> Standard Shipping Included</span>
+                            <div>
+                                <span class="text-muted mr-2">Total Amount:</span>
+                                <strong class="h5 font-weight-bold text-ghibli-accent mb-0">₱<?php echo number_format($order['total_amount'], 2); ?></strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,11 +168,11 @@ include '../includes/header.php';
 
     <?php else: ?>
         <!-- EMPTY ORDERS STATE -->
-        <div class="text-center py-5 bg-white rounded-lg shadow-sm">
+        <div class="text-center py-5 cart-empty-card p-4">
             <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
-            <h3>No Orders Found</h3>
+            <h3 style="font-family: 'Fredoka', cursive; color: var(--ghibli-forest);">No Orders Found</h3>
             <p class="text-muted">You haven't placed any orders yet.</p>
-            <a href="../index.php" class="btn btn-ghibli-primary mt-3">Start Shopping</a>
+            <a href="../index.php" class="btn btn-ghibli-primary mt-2">Start Shopping</a>
         </div>
     <?php endif; ?>
 </div>

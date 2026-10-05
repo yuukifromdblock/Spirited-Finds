@@ -483,23 +483,23 @@ if (!empty($_SESSION['first_name'])) {
      ============================================================ -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-lg border-0 shadow">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title font-weight-bold" style="color: var(--ghibli-forest);"><i class="fa-solid fa-plus-circle mr-2 text-warning"></i>Add New Product</h5>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-solid fa-plus-circle mr-2 text-warning"></i>Add New Product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form action="products.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="add_product">
-                <div class="modal-body p-4">
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <label class="font-weight-600">Product Name</label>
+                            <label>Product Name</label>
                             <input type="text" name="title" class="form-control" required placeholder="e.g. Totoro Plushie">
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Category</label>
+                            <label>Category</label>
                             <select name="category_id" class="form-control" required>
                                 <option value="" disabled selected>Select...</option>
                                 <?php foreach ($categories as $cat): ?>
@@ -508,44 +508,44 @@ if (!empty($_SESSION['first_name'])) {
                             </select>
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Price (₱)</label>
+                            <label>Price (₱)</label>
                             <input type="number" step="0.01" name="price" class="form-control" required placeholder="0.00">
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Stock Quantity</label>
+                            <label>Stock Quantity</label>
                             <input type="number" name="stock" class="form-control" required value="10">
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Rating (1-5)</label>
+                            <label>Rating (1-5)</label>
                             <input type="number" min="1" max="5" name="rating" class="form-control" value="5">
                         </div>
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-600">Upload Image File</label>
+                            <label>Upload Image File</label>
                             <input type="file" name="image" class="form-control-file" accept="image/*">
                         </div>
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-600">Or Image Relative Path / URL</label>
+                            <label>Or Image Relative Path / URL</label>
                             <input type="text" name="image_url" class="form-control" placeholder="./image/sample.png">
                         </div>
                         <div class="col-12 form-group">
-                            <label class="font-weight-600">Description</label>
+                            <label>Description</label>
                             <textarea name="description" class="form-control" rows="3" placeholder="Enter product details..."></textarea>
                         </div>
-                        <div class="col-12 d-flex gap-4">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="is_featured" id="add_featured" value="1">
-                                <label class="form-check-label font-weight-600" for="add_featured"><i class="fa-solid fa-star text-warning"></i> Featured Product</label>
-                            </div>
-                            <div class="form-check form-check-inline ml-3">
-                                <input class="form-check-input" type="checkbox" name="is_special" id="add_special" value="1">
-                                <label class="form-check-label font-weight-600" for="add_special"><i class="fa-solid fa-wand-magic-sparkles text-danger"></i> Special Edition</label>
-                            </div>
+                        <div class="col-12 mt-2">
+                            <label class="ghibli-checkbox-card">
+                                <input type="checkbox" name="is_featured" id="add_featured" value="1">
+                                <span class="font-weight-600"><i class="fa-solid fa-star text-warning mr-1"></i> Featured Product</span>
+                            </label>
+                            <label class="ghibli-checkbox-card">
+                                <input type="checkbox" name="is_special" id="add_special" value="1">
+                                <span class="font-weight-600"><i class="fa-solid fa-wand-magic-sparkles text-danger mr-1"></i> Special Edition</span>
+                            </label>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0 pr-4 pb-4">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-ghibli-outline"><i class="fa-solid fa-floppy-disk mr-1"></i> Save Product</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-modal-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-ghibli-submit"><i class="fa-solid fa-floppy-disk mr-1"></i> Save Product</button>
                 </div>
             </form>
         </div>
@@ -557,9 +557,9 @@ if (!empty($_SESSION['first_name'])) {
      ============================================================ -->
 <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-lg border-0 shadow">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title font-weight-bold" style="color: var(--ghibli-forest);"><i class="fa-solid fa-pen-to-square mr-2 text-warning"></i>Edit Product</h5>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fa-solid fa-pen-to-square mr-2 text-warning"></i>Edit Product</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -568,14 +568,14 @@ if (!empty($_SESSION['first_name'])) {
                 <input type="hidden" name="action" value="edit_product">
                 <input type="hidden" name="product_id" id="edit_product_id">
                 
-                <div class="modal-body p-4">
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8 form-group">
-                            <label class="font-weight-600">Product Name</label>
+                            <label>Product Name</label>
                             <input type="text" name="title" id="edit_title" class="form-control" required>
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Category</label>
+                            <label>Category</label>
                             <select name="category_id" id="edit_category_id" class="form-control" required>
                                 <?php foreach ($categories as $cat): ?>
                                     <option value="<?= $cat['category_id'] ?>"><?= htmlspecialchars($cat['category_name']) ?></option>
@@ -583,44 +583,44 @@ if (!empty($_SESSION['first_name'])) {
                             </select>
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Price (₱)</label>
+                            <label>Price (₱)</label>
                             <input type="number" step="0.01" name="price" id="edit_price" class="form-control" required>
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Stock Quantity</label>
+                            <label>Stock Quantity</label>
                             <input type="number" name="stock" id="edit_stock" class="form-control" required>
                         </div>
                         <div class="col-md-4 form-group">
-                            <label class="font-weight-600">Rating (1-5)</label>
+                            <label>Rating (1-5)</label>
                             <input type="number" min="1" max="5" name="rating" id="edit_rating" class="form-control">
                         </div>
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-600">Replace Image File</label>
+                            <label>Replace Image File</label>
                             <input type="file" name="image" class="form-control-file" accept="image/*">
                         </div>
                         <div class="col-md-6 form-group">
-                            <label class="font-weight-600">Or Image Relative Path / URL</label>
+                            <label>Or Image Relative Path / URL</label>
                             <input type="text" name="image_url" id="edit_image_url" class="form-control">
                         </div>
                         <div class="col-12 form-group">
-                            <label class="font-weight-600">Description</label>
+                            <label>Description</label>
                             <textarea name="description" id="edit_description" class="form-control" rows="3"></textarea>
                         </div>
-                        <div class="col-12 d-flex gap-4">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="is_featured" id="edit_featured" value="1">
-                                <label class="form-check-label font-weight-600" for="edit_featured"><i class="fa-solid fa-star text-warning"></i> Featured Product</label>
-                            </div>
-                            <div class="form-check form-check-inline ml-3">
-                                <input class="form-check-input" type="checkbox" name="is_special" id="edit_special" value="1">
-                                <label class="form-check-label font-weight-600" for="edit_special"><i class="fa-solid fa-wand-magic-sparkles text-danger"></i> Special Edition</label>
-                            </div>
+                        <div class="col-12 mt-2">
+                            <label class="ghibli-checkbox-card">
+                                <input type="checkbox" name="is_featured" id="edit_featured" value="1">
+                                <span class="font-weight-600"><i class="fa-solid fa-star text-warning mr-1"></i> Featured Product</span>
+                            </label>
+                            <label class="ghibli-checkbox-card">
+                                <input type="checkbox" name="is_special" id="edit_special" value="1">
+                                <span class="font-weight-600"><i class="fa-solid fa-wand-magic-sparkles text-danger mr-1"></i> Special Edition</span>
+                            </label>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0 pt-0 pr-4 pb-4">
-                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-ghibli-outline"><i class="fa-solid fa-rotate mr-1"></i> Update Product</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-modal-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-ghibli-submit"><i class="fa-solid fa-rotate mr-1"></i> Update Product</button>
                 </div>
             </form>
         </div>

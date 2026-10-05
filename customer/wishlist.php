@@ -135,20 +135,23 @@ if ($is_logged_in) {
 include '../includes/header.php';
 ?>
 
-<div class="container my-5" style="min-height: 60vh;">
-    <h2 class="section-title mb-4"><i class="fas fa-heart text-danger"></i> Your Wishlist</h2>
+<!-- CUSTOMER STYLE LINK -->
+<link rel="stylesheet" href="../assets/global/customer-style.css">
+
+<div class="container cart-page-wrapper" style="min-height: 60vh;">
+    <h2 class="cart-title mb-4"><i class="fas fa-heart text-ghibli-accent mr-2"></i> Your Wishlist</h2>
 
     <?php if (!$is_logged_in): ?>
         <!-- GUEST STATE: KAILANGAN MAG-LOGIN -->
-        <div class="card shadow-sm border-0 rounded-lg p-5 text-center my-5 mx-auto" style="max-width: 500px;">
+        <div class="card cart-auth-card p-5 text-center my-5 mx-auto" style="max-width: 500px;">
             <div class="mb-3">
                 <i class="fas fa-user-lock fa-4x text-muted"></i>
             </div>
-            <h3 class="font-weight-bold mb-2">Authentication Required</h3>
+            <h3 class="font-weight-bold mb-2" style="font-family: 'Fredoka', cursive; color: var(--ghibli-forest);">Authentication Required</h3>
             <p class="text-muted mb-4">Please log in or create an account to view and save items in your wishlist.</p>
             <div class="d-grid gap-2">
-                <a href="../login.php?redirect=customer/wishlist.php" class="btn btn-ghibli-primary py-2 font-weight-bold">Log In</a>
-                <a href="../signup.php" class="btn btn-outline-secondary py-2 font-weight-bold">Create an Account</a>
+                <a href="../login.php?redirect=customer/wishlist.php" class="btn btn-ghibli-primary py-2 font-weight-bold mb-2">Log In</a>
+                <a href="../signup.php" class="btn btn-outline-secondary py-2 font-weight-bold" style="border-radius: var(--radius-pill, 50px);">Create an Account</a>
             </div>
         </div>
 
@@ -157,18 +160,18 @@ include '../includes/header.php';
         <div class="row">
             <?php foreach ($wishlist_items as $item): ?>
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    <div class="card h-100 shadow-sm border-0 rounded-lg overflow-hidden position-relative">
+                    <div class="card cart-table-card h-100 position-relative p-2">
                         <!-- Remove Button Overlay -->
                         <a href="wishlist.php?action=remove&id=<?php echo $item['product_id']; ?>" 
-                           class="btn btn-sm btn-danger position-absolute" 
-                           style="top: 10px; right: 10px; z-index: 10; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" 
+                           class="btn btn-cart-delete position-absolute" 
+                           style="top: 15px; right: 15px; z-index: 10; width: 32px; height: 32px; border-radius: 50%; padding: 0;" 
                            title="Remove from wishlist"
                            onclick="return confirm('Remove this item from your wishlist?');">
                             <i class="fas fa-times"></i>
                         </a>
 
                         <!-- Product Image -->
-                        <div class="text-center p-3 bg-light">
+                        <div class="text-center p-3 rounded" style="background-color: var(--ghibli-warm-paper, #F5EFE0);">
                             <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                  alt="<?php echo htmlspecialchars($item['title']); ?>" 
                                  class="img-fluid rounded" 
@@ -177,9 +180,9 @@ include '../includes/header.php';
                         </div>
 
                         <!-- Card Body -->
-                        <div class="card-body d-flex flex-column justify-content-between">
+                        <div class="card-body d-flex flex-column justify-content-between p-3">
                             <div>
-                                <h5 class="card-title font-weight-bold text-truncate mb-1">
+                                <h5 class="card-title font-weight-bold text-truncate mb-1" style="font-size: 1rem;">
                                     <a href="../product_details.php?id=<?php echo $item['product_id']; ?>" class="text-dark text-decoration-none">
                                         <?php echo htmlspecialchars($item['title']); ?>
                                     </a>
@@ -194,7 +197,7 @@ include '../includes/header.php';
                                     ?>
                                 </div>
 
-                                <div class="h6 font-weight-bold text-success mb-3">
+                                <div class="h6 font-weight-bold text-ghibli-accent mb-3">
                                     ₱<?php echo number_format($item['price'], 2); ?>
                                 </div>
                             </div>
@@ -203,11 +206,11 @@ include '../includes/header.php';
                             <div>
                                 <?php if ($item['stock'] > 0): ?>
                                     <a href="wishlist.php?action=move_to_cart&id=<?php echo $item['product_id']; ?>" 
-                                       class="btn btn-ghibli-primary btn-block btn-sm py-2">
+                                       class="btn btn-ghibli-primary btn-block btn-sm py-2 font-weight-bold">
                                         <i class="fas fa-shopping-cart mr-1"></i> Move to Cart
                                     </a>
                                 <?php else: ?>
-                                    <button class="btn btn-secondary btn-block btn-sm py-2" disabled>
+                                    <button class="btn btn-secondary btn-block btn-sm py-2" disabled style="border-radius: var(--radius-pill, 50px);">
                                         Out of Stock
                                     </button>
                                 <?php endif; ?>
@@ -219,11 +222,11 @@ include '../includes/header.php';
         </div>
     <?php else: ?>
         <!-- EMPTY WISHLIST STATE -->
-        <div class="text-center py-5 bg-white rounded-lg shadow-sm">
+        <div class="text-center py-5 cart-empty-card p-4">
             <i class="fas fa-heart-broken fa-4x text-muted mb-3"></i>
-            <h3>Your Wishlist is Empty</h3>
+            <h3 style="font-family: 'Fredoka', cursive; color: var(--ghibli-forest);">Your Wishlist is Empty</h3>
             <p class="text-muted">Explore our shop and save your favorite Ghibli treasures!</p>
-            <a href="../index.php" class="btn btn-ghibli-primary mt-3">Explore Products</a>
+            <a href="../index.php" class="btn btn-ghibli-primary mt-2">Explore Products</a>
         </div>
     <?php endif; ?>
 </div>

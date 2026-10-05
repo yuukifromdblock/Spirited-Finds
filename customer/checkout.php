@@ -23,6 +23,8 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$user_id = intval($_SESSION['user_id']);
+
 // 2. ROLE GUARD: Only 'customer' role is permitted to checkout
 if (isset($_SESSION['role']) && $_SESSION['role'] !== 'customer') {
     $_SESSION['error'] = "Admins cannot perform checkout operations.";
@@ -30,14 +32,7 @@ if (isset($_SESSION['role']) && $_SESSION['role'] !== 'customer') {
     exit();
 }
 
-// 3. CART GUARD: Cart must not be empty
-if (empty($_SESSION['cart'])) {
-    header("Location: cart.php");
-    exit();
-}
-
 // Fetch Customer Account Details gamit ang first_name at last_name
-$user_id = $_SESSION['user_id'];
 $user_stmt = $conn->prepare("SELECT first_name, last_name, email, phone FROM users WHERE user_id = ?");
 $user_stmt->bind_param("i", $user_id);
 $user_stmt->execute();
@@ -47,36 +42,40 @@ $user_stmt->close();
 // Pagsamahin ang pangalan bilang Full Name
 $fullname_display = trim(($user_data['first_name'] ?? '') . ' ' . ($user_data['last_name'] ?? ''));
 
-// Fetch Cart Products & Calculate Total
+// 3. FETCH CART PRODUCTS DIRECTLY FROM DATABASE TABLE 'cart'
 $cart_products = [];
 $total_amount = 0;
 
-$ids = array_keys($_SESSION['cart']);
-if (!empty($ids)) {
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $types = str_repeat('i', count($ids));
+$stmt = $conn->prepare("
+    SELECT c.quantity, c.product_id, p.title, p.price, p.image, p.stock 
+    FROM cart c 
+    JOIN products p ON c.product_id = p.product_id 
+    WHERE c.user_id = ?
+");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    $stmt = $conn->prepare("SELECT * FROM products WHERE product_id IN ($placeholders)");
-    $stmt->bind_param($types, ...$ids);
-    $stmt->execute();
-    $result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $qty = intval($row['quantity']);
+    $subtotal = $row['price'] * $qty;
+    $total_amount += $subtotal;
 
-    while ($row = $result->fetch_assoc()) {
-        $pid = $row['product_id'];
-        $qty = $_SESSION['cart'][$pid];
-        $subtotal = $row['price'] * $qty;
-        $total_amount += $subtotal;
+    $cart_products[] = [
+        'product_id' => $row['product_id'],
+        'title'      => $row['title'] ?? 'Untitled Product',
+        'image'      => get_image_path($row['image']),
+        'price'      => $row['price'],
+        'quantity'   => $qty,
+        'subtotal'   => $subtotal
+    ];
+}
+$stmt->close();
 
-        $cart_products[] = [
-            'product_id' => $pid,
-            'title'      => $row['title'] ?? $row['product_name'] ?? 'Untitled Product',
-            'image'      => get_image_path($row['image']),
-            'price'      => $row['price'],
-            'quantity'   => $qty,
-            'subtotal'   => $subtotal
-        ];
-    }
-    $stmt->close();
+// 4. CART GUARD: Kung walang laman ang Cart sa Database, ibalik sa cart.php
+if (empty($cart_products)) {
+    header("Location: cart.php");
+    exit();
 }
 
 $shipping_fee = 100.00; // Fixed shipping rate
@@ -121,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
             $item_stmt->close();
             $stock_stmt->close();
 
-            // 3. Clear DB Cart Table for this user if exists
+            // 3. Clear DB Cart Table for this user
             $clear_cart = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
             if ($clear_cart) {
                 $clear_cart->bind_param("i", $user_id);
@@ -131,9 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 
             // Commit Transaction
             $conn->commit();
-
-            // Clear Session Cart
-            $_SESSION['cart'] = [];
 
             // Redirect to Success / Confirmation Page
             header("Location: order_success.php?order_id=" . $order_id);
@@ -149,6 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['place_order'])) {
 // Include Header
 include '../includes/header.php';
 ?>
+
+<!-- CUSTOMER STYLE LINK -->
+<link rel="stylesheet" href="../assets/global/customer-style.css">
 
 <div class="container my-5" style="min-height: 60vh;">
     <h2 class="section-title mb-4"><i class="fas fa-credit-card"></i> Checkout</h2>
@@ -237,7 +236,7 @@ include '../includes/header.php';
                                 <div class="d-flex align-items-center">
                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                          alt="<?php echo htmlspecialchars($item['title']); ?>" 
-                                         style="width: 50px; height: 50px; object-fit: cover;" 
+                                         style="width: 50px; height: 50px; object-fit: cover; flex-shrink: 0;" 
                                          class="rounded mr-3"
                                          onerror="this.onerror=null; this.src='../assets/images/logo.png';">
                                     <div>

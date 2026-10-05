@@ -32,18 +32,21 @@ $stmt->close();
 include '../includes/header.php';
 ?>
 
-<div class="container my-5 text-center" style="min-height: 60vh;">
-    <div class="card shadow-sm border-0 rounded-4 p-5 mx-auto" style="max-width: 600px;">
+<!-- CUSTOMER STYLE LINK -->
+<link rel="stylesheet" href="../assets/global/customer-style.css">
+
+<div class="container cart-page-wrapper text-center my-5" style="min-height: 60vh;">
+    <div class="card cart-auth-card p-5 mx-auto" style="max-width: 600px;">
         <div class="mb-3 text-success">
             <i class="fas fa-check-circle fa-5x"></i>
         </div>
-        <h2 class="fw-bold text-dark mb-2">Thank You for Your Order!</h2>
-        <p class="text-muted fs-5">Your order number is <strong class="text-success">#<?php echo str_pad($order_id, 6, '0', STR_PAD_LEFT); ?></strong>.</p>
+        <h2 class="font-weight-bold mb-2" style="font-family: 'Fredoka', cursive, sans-serif; color: var(--ghibli-forest, #2C4A34);">Thank You for Your Order!</h2>
+        <p class="text-muted h5 font-weight-normal mb-3">Your order number is <strong class="text-ghibli-accent">#<?php echo str_pad($order_id, 6, '0', STR_PAD_LEFT); ?></strong>.</p>
         <p class="text-muted mb-4">We have received your order and are preparing your magical items for dispatch.</p>
         
-        <div class="d-flex justify-content-center gap-3">
-            <a href="../index.php" class="btn btn-ghibli-primary px-4 py-2">Continue Shopping</a>
-            <a href="my_orders.php" class="btn btn-outline-secondary px-4 py-2">View My Orders</a>
+        <div class="d-flex justify-content-center flex-wrap">
+            <a href="../index.php" class="btn btn-ghibli-primary px-4 py-2 m-1 font-weight-bold">Continue Shopping</a>
+            <a href="my_orders.php" class="btn btn-outline-secondary px-4 py-2 m-1 font-weight-bold" style="border-radius: var(--radius-pill, 50px);">View My Orders</a>
         </div>
     </div>
 </div>

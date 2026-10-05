@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 27, 2026 at 07:48 PM
+-- Generation Time: Oct 05, 2026 at 11:45 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,6 +33,14 @@ CREATE TABLE `cart` (
   `product_id` int(11) NOT NULL,
   `quantity` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`cart_id`, `user_id`, `product_id`, `quantity`) VALUES
+(3, 3, 2, 1),
+(4, 3, 15, 2);
 
 -- --------------------------------------------------------
 
@@ -86,6 +94,14 @@ CREATE TABLE `orders` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`order_id`, `user_id`, `total_amount`, `status`, `created_at`) VALUES
+(1, 3, 400.00, 'Pending', '2026-10-05 09:23:59'),
+(2, 3, 900.00, 'Completed', '2026-10-05 09:40:29');
+
 -- --------------------------------------------------------
 
 --
@@ -99,6 +115,14 @@ CREATE TABLE `order_items` (
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `quantity`, `price`) VALUES
+(1, 1, 3, 1, 300.00),
+(2, 2, 2, 1, 800.00);
 
 -- --------------------------------------------------------
 
@@ -126,8 +150,8 @@ CREATE TABLE `products` (
 
 INSERT INTO `products` (`product_id`, `category_id`, `title`, `description`, `price`, `image`, `rating`, `stock`, `is_featured`, `is_special`, `created_at`) VALUES
 (1, 2, 'Sweatshirt', 'Cozy sweatshirt featuring Ghibli designs.', 1000.00, './image/Sweatshirt.png', 3, 15, 1, 0, '2026-09-25 09:14:24'),
-(2, 2, 'Ghibli Apron', 'Stylish apron for cooking with a Ghibli twist.', 800.00, './image/Studio Ghibli Apron.png', 3, 10, 1, 0, '2026-09-25 09:14:24'),
-(3, 4, 'Stickers', 'Fun sticker set featuring Ghibli characters.', 300.00, './image/Stickers.png', 4, 50, 1, 0, '2026-09-25 09:14:24'),
+(2, 2, 'Ghibli Apron', 'Stylish apron for cooking with a Ghibli twist.', 800.00, './image/Studio Ghibli Apron.png', 3, 9, 1, 0, '2026-09-25 09:14:24'),
+(3, 4, 'Stickers', 'Fun sticker set featuring Ghibli characters.', 300.00, './image/Stickers.png', 4, 49, 1, 0, '2026-09-25 09:14:24'),
 (4, 4, 'Plush Tote Bag', 'Soft tote bag perfect for everyday use.', 700.00, './image/Plush Tote Bag.png', 5, 20, 1, 0, '2026-09-25 09:14:24'),
 (5, 1, 'Notebooks', 'Cute notebooks featuring Ghibli artwork.', 400.00, './image/Notebooks.png', 3, 30, 1, 0, '2026-09-25 09:14:24'),
 (6, 4, 'Kikis Stamp', 'Wooden stamp inspired by Kiki\'s Delivery Service.', 500.00, './image/Kiki_s Delivery Wooden Stamp.png', 3, 25, 1, 0, '2026-09-25 09:14:24'),
@@ -188,8 +212,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `email`, `phone`, `password`, `role`, `created_at`) VALUES
-(1, 'Admin', 'User', 'admin@spiritedfinds.com', '09123456789', '$2y$10$q2/9p23iElnP7M5LpPvh8eIeA1Ept3yN6v9uCxlm2/gX6u2s4Z63G', 'admin', '2026-09-25 16:08:39'),
-(2, '', '', 'customer@spiritedfinds.com', '09987654321', '$2y$10$q2/9p23iElnP7M5LpPvh8eIeA1Ept3yN6v9uCxlm2/gX6u2s4Z63G', 'customer', '2026-09-25 16:08:39');
+(1, 'Kiki\'s', 'Delivery', 'admin@spiritedfinds.com', '09123456789', 'admin123', 'admin', '2026-09-25 16:08:39'),
+(2, '', '', 'customer@spiritedfinds.com', '09987654321', '$2y$10$q2/9p23iElnP7M5LpPvh8eIeA1Ept3yN6v9uCxlm2/gX6u2s4Z63G', 'customer', '2026-09-25 16:08:39'),
+(3, 'John Mark', 'Reyes', 'jmvreyes@gmail.com', '09999999999', '$2y$10$e8ReDadw19X9Cul4ijtPeeyy8eX7cZgtHH.M4CW9ry35vwj49PZBq', 'customer', '2026-10-05 08:41:42');
 
 -- --------------------------------------------------------
 
@@ -272,7 +297,7 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -290,13 +315,13 @@ ALTER TABLE `contact_messages`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -308,13 +333,13 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `wishlist`
 --
 ALTER TABLE `wishlist`
-  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `wishlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
